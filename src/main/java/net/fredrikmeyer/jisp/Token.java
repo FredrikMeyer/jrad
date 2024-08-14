@@ -3,45 +3,41 @@ package net.fredrikmeyer.jisp;
 import java.util.Objects;
 
 public sealed interface Token {
-    final class LeftParen implements Token {
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
 
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof LeftParen;
-        }
+    int position();
 
-        @Override
-        public String toString() {
-            return "LeftParen{}";
+    record LeftParen(int position) implements Token {
+
+        public LeftParen() {
+            this(0);
         }
     }
 
-    final class RightParen implements Token {
-        @Override
-        public int hashCode() {
-            return super.hashCode();
+    record RightParen(int position) implements Token {
+
+        public RightParen() {
+            this(0);
         }
 
         @Override
-        public boolean equals(Object obj) {
-            return obj instanceof RightParen;
-        }
-
-        @Override
-        public String toString() {
-            return "RightParen{}";
+        public int position() {
+            return position;
         }
     }
 
     final class Symbol implements Token {
-        private final String value;
 
-        Symbol(String value) {
+        private final String value;
+        private final int position;
+
+        Symbol(String value, int position) {
             this.value = value;
+            this.position = position;
+        }
+
+        public Symbol(String value) {
+            this.value = value;
+            this.position = 0;
         }
 
         public String value() {
@@ -49,30 +45,50 @@ public sealed interface Token {
         }
 
         @Override
-        public String toString() {
-            return "Symbol{" + "value='" + value + '\'' + '}';
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            Symbol symbol = (Symbol) o;
+            return Objects.equals(value,
+                symbol.value);
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Symbol symbol = (Symbol) o;
-            return Objects.equals(value,
-                    symbol.value);
+        public String toString() {
+            return "Symbol{" +
+                "value='" + value + '\'' +
+                ", position=" + position +
+                '}';
         }
 
         @Override
         public int hashCode() {
             return Objects.hashCode(value);
+        }
+
+        @Override
+        public int position() {
+            return position;
         }
     }
 
     final class StringLiteral implements Token {
+
         private final String value;
+        private final int position;
+
+        public StringLiteral(String value, int position) {
+            this.value = value;
+            this.position = position;
+        }
 
         public StringLiteral(String value) {
             this.value = value;
+            this.position = 0;
         }
 
         public String value() {
@@ -81,29 +97,49 @@ public sealed interface Token {
 
         @Override
         public String toString() {
-            return "StringLiteral{" + "value='" + value + '\'' + '}';
+            return "StringLiteral{" +
+                "value='" + value + '\'' +
+                ", position=" + position +
+                '}';
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             StringLiteral that = (StringLiteral) o;
             return Objects.equals(value,
-                    that.value);
+                that.value);
         }
 
         @Override
         public int hashCode() {
             return Objects.hashCode(value);
         }
+
+        @Override
+        public int position() {
+            return position;
+        }
     }
 
     final class NumberLiteral implements Token {
+
         private final double value;
+        private final int position;
+
+        public NumberLiteral(double value, int position) {
+            this.value = value;
+            this.position = position;
+        }
 
         public NumberLiteral(double value) {
             this.value = value;
+            this.position = 0;
         }
 
         public double value() {
@@ -111,12 +147,24 @@ public sealed interface Token {
         }
 
         @Override
+        public String toString() {
+            return "NumberLiteral{" +
+                "value=" + value +
+                ", position=" + position +
+                '}';
+        }
+
+        @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             NumberLiteral that = (NumberLiteral) o;
             return Double.compare(value,
-                    that.value) == 0;
+                that.value) == 0;
         }
 
         @Override
@@ -125,13 +173,23 @@ public sealed interface Token {
         }
 
         @Override
-        public String toString() {
-            return "NumberLiteral{" + "value=" + value + '}';
+        public int position() {
+            return position;
         }
     }
 
     final class EOF implements Token {
+
         private static final String value = "EOF";
+        private final int position;
+
+        public EOF(int position) {
+            this.position = position;
+        }
+
+        public EOF() {
+            this.position = 0;
+        }
 
         @Override
         public int hashCode() {
@@ -145,7 +203,14 @@ public sealed interface Token {
 
         @Override
         public String toString() {
-            return "EOF{}";
+            return "EOF{" +
+                "position=" + position +
+                '}';
+        }
+
+        @Override
+        public int position() {
+            return position;
         }
     }
 }

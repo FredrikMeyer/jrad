@@ -10,7 +10,7 @@ class LispExpressionTest {
 
     @Test
     public void stringifiesNicely() {
-        String expression = new LispList(List.of(new LispVariable("+"),
+        String expression = new LispList(List.of(new LispSymbol("+"),
                 new LispLiteral.NumberLiteral(1.),
                 new LispLiteral.NumberLiteral(2.))).toString();
 

@@ -1,31 +1,104 @@
 package net.fredrikmeyer.jisp;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
+import net.fredrikmeyer.jisp.Token.EOF;
+import net.fredrikmeyer.jisp.Token.LeftParen;
+import net.fredrikmeyer.jisp.Token.NumberLiteral;
+import net.fredrikmeyer.jisp.Token.RightParen;
+import net.fredrikmeyer.jisp.Token.StringLiteral;
+import net.fredrikmeyer.jisp.Token.Symbol;
+import org.jetbrains.annotations.NotNull;
 
 public class ParserImpl implements Parser {
+
+    @NotNull
     @Override
     public LispExpression parse(List<Token> tokens) {
-//        Stack<Token> stack = new Stack<>();
-//
-//        while (!stack.isEmpty()) {
-//            Token token = stack.pop();
-//
-//        }
+        if (tokens.isEmpty()) {
+            throw new IllegalArgumentException("Plz not null");
+        }
 
-        Token firstToken = tokens.getFirst();
-        Objects.requireNonNull(firstToken);
+        if (tokens.size() == 1 && tokens.getFirst().getClass() == EOF.class) {
+            // TODO, egen exception
+            throw new RuntimeException("No tokens parsed.");
+        }
 
-        LispExpression exp = switch (firstToken) {
-            case Token.NumberLiteral n -> throw new IllegalStateException("not yet");
-            case Token.StringLiteral s -> new LispLiteral.StringLiteral(s.value());
-            case Token.Symbol s ->throw new IllegalStateException("not yet");
-            case Token.EOF e -> throw new IllegalStateException("not yet");
-            case Token.LeftParen l -> throw new IllegalStateException("not yet");
-            case Token.RightParen _ -> throw new IllegalStateException("not yet");
-        };
+        if (tokens.size() == 2) {
+            Token first = tokens.getFirst();
+            return switch (first) {
+                case NumberLiteral numberLiteral -> parseNumberLiteral(numberLiteral);
+                case StringLiteral stringLiteral -> parseStringLiteral(stringLiteral);
+                case Symbol symbol -> new LispSymbol(symbol.value());
+                default -> {
+                    throw new RuntimeException("No tokens parsed.");
+                }
+            };
+        }
 
-        return exp;
+        Stack<LispList> stack = new Stack<>();
+
+        for (Token t : tokens) {
+            if (t.getClass() == Token.EOF.class) {
+                break;
+            }
+            switch (t) {
+                case Token.LeftParen _ -> {
+                    stack.push(new LispList(new ArrayList<>()));
+                }
+                case Token.RightParen _ -> {
+                    if (stack.isEmpty()) {
+                        throw new RuntimeException("Mismatched parentheses.");
+                    }
+                    var popped = stack.pop();
+                    if (stack.isEmpty()) {
+                        stack.push(popped); // This is the top-level list
+                    } else {
+                        stack.peek().append(popped); // This is a sublist, append to the parent list
+                    }
+                }
+                case Token.NumberLiteral numberLiteral -> {
+                    if (!stack.isEmpty()) {
+                        stack.peek().append(parseNumberLiteral(numberLiteral));
+                    } else {
+                        //exp = parseNumberLiteral(numberLiteral);
+                        throw new RuntimeException("Should not get here.");
+                    }
+                }
+                case Token.StringLiteral stringLiteral -> {
+                    if (!stack.isEmpty()) {
+                        stack.peek().append(parseStringLiteral(stringLiteral));
+                    } else {
+                        //exp = parseStringLiteral(stringLiteral);
+                        throw new RuntimeException("Should not get here.");
+                    }
+                }
+                case Token.Symbol symbol -> {
+                    if (!stack.isEmpty()) {
+                        stack.peek().append(new LispSymbol(symbol.value()));
+                    } else {
+                        //exp = new LispSymbol(symbol.value());
+                        throw new RuntimeException("Should not get here.");
+                    }
+                }
+                case EOF _ -> {
+                    throw new IllegalArgumentException("shoudl not hete");
+                }
+            }
+        }
+
+        assert stack.size() == 1;
+
+        return Objects.requireNonNull(stack.pop());
+    }
+
+    private static LispLiteral.StringLiteral parseStringLiteral(Token.StringLiteral s) {
+        return new LispLiteral.StringLiteral(s.value());
+    }
+
+    private static LispLiteral.NumberLiteral parseNumberLiteral(Token.NumberLiteral n) {
+        return new LispLiteral.NumberLiteral(n.value());
     }
 }

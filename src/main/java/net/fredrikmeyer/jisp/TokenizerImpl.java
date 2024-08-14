@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class TokenizerImpl implements Tokenizer {
+
     private int position = 0;
     private String input;
 
@@ -21,10 +22,10 @@ public class TokenizerImpl implements Tokenizer {
             if (Character.isWhitespace(current())) {
                 slurpWhitespace();
             } else if (current() == '(') {
-                tokens.add(new Token.LeftParen());
+                tokens.add(new Token.LeftParen(position));
                 advance();
             } else if (current() == ')') {
-                tokens.add(new Token.RightParen());
+                tokens.add(new Token.RightParen(position));
                 advance();
             } else if (isAllowedCharacterInSymbol(current())) {
                 Token.Symbol symbol = slurpSymbol();
@@ -41,16 +42,16 @@ public class TokenizerImpl implements Tokenizer {
                 throw new IllegalArgumentException("Unexpected character: " + current());
             }
         }
-        tokens.add(new Token.EOF());
+        tokens.add(new Token.EOF(position));
         return tokens;
     }
 
     private static boolean isAllowedCharacterInSymbol(char currentChar) {
         return Character.isAlphabetic(currentChar)
-               || currentChar == '_'
-               || currentChar == '-'
-               || currentChar == '+'
-               || currentChar == '*';
+            || currentChar == '_'
+            || currentChar == '-'
+            || currentChar == '+'
+            || currentChar == '*';
     }
 
     private void advance() {
@@ -69,33 +70,36 @@ public class TokenizerImpl implements Tokenizer {
 
     private Token.NumberLiteral slurpNumber() {
         StringBuilder value = new StringBuilder();
+        int initPosition = position;
         while ((position) < input.length() && Character.isDigit(current())) {
             value.append(current());
             advance();
         }
 
-        return new Token.NumberLiteral(Double.parseDouble(value.toString()));
+        return new Token.NumberLiteral(Double.parseDouble(value.toString()), initPosition);
     }
 
     private Token.StringLiteral slurpString() {
         StringBuilder value = new StringBuilder();
         advance();
+        int initPosition = position;
         while ((position) < input.length() && current() != '"') {
             value.append(current());
             advance();
         }
 
-        return new Token.StringLiteral(value.toString());
+        return new Token.StringLiteral(value.toString(), initPosition);
     }
 
     private Token.Symbol slurpSymbol() {
         StringBuilder value = new StringBuilder();
+        int initPosition = position;
         while (position < input.length() && isAllowedCharacterInSymbol(current())) {
             value.append(current());
             advance();
         }
 
-        return new Token.Symbol(value.toString());
+        return new Token.Symbol(value.toString(), initPosition);
     }
 
     private void slurpWhitespace() {
