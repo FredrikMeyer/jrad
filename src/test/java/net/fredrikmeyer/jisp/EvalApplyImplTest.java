@@ -30,6 +30,11 @@ class EvalApplyImplTest {
             public void setVariable(String name, LispValue value) {
 
             }
+
+            @Override
+            public Environment extendEnvironment(Map<String, LispValue> bindings) {
+                return null;
+            }
         };
     }
 
@@ -57,6 +62,11 @@ class EvalApplyImplTest {
             @Override
             public void setVariable(String name, LispValue value) {
                 env.put(name, value);
+            }
+
+            @Override
+            public Environment extendEnvironment(Map<String, LispValue> bindings) {
+                return null;
             }
         };
 

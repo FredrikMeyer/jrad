@@ -3,7 +3,6 @@ package net.fredrikmeyer.jisp;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class StandardEnvironment implements Environment {
@@ -45,5 +44,10 @@ public class StandardEnvironment implements Environment {
     @Override
     public void setVariable(String name, LispValue value) {
         env.put(name, value);
+    }
+
+    @Override
+    public Environment extendEnvironment(Map<String, LispValue> bindings) {
+        return null;
     }
 }

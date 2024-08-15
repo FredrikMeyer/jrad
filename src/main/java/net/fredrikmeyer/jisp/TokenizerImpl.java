@@ -14,6 +14,7 @@ public class TokenizerImpl implements Tokenizer {
 
     @Override
     public List<Token> tokenize(String input) {
+        position = 0;
         Objects.requireNonNull(input);
 
         List<Token> tokens = new ArrayList<>();
@@ -58,6 +59,10 @@ public class TokenizerImpl implements Tokenizer {
         position++;
     }
 
+    private void retreat() {
+        position--;
+    }
+
     private char current() {
         assert position < input.length();
         return input.charAt(position);
@@ -98,6 +103,7 @@ public class TokenizerImpl implements Tokenizer {
             value.append(current());
             advance();
         }
+        retreat();
 
         return new Token.Symbol(value.toString(), initPosition);
     }
