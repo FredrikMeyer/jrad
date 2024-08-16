@@ -7,10 +7,10 @@ import java.util.Map;
 
 public class StandardEnvironment implements Environment {
 
-    private final Map<String, LispValue> env = new HashMap<>();
+    private Environment parent;
 
-    public StandardEnvironment() {
-        var plus = new BuiltInProcedure() {
+    private final Map<String, LispValue> env = new HashMap<>() {{
+        put("+", new BuiltInProcedure() {
             @Override
             LispValue apply(LispValue... values) {
                 return new NumberValue(
@@ -19,9 +19,8 @@ public class StandardEnvironment implements Environment {
                         .map(NumberValue::d)
                         .reduce(0.0, Double::sum));
             }
-        };
-
-        var multiplication = new BuiltInProcedure() {
+        });
+        put("*", new BuiltInProcedure() {
             @Override
             LispValue apply(LispValue... values) {
                 return new NumberValue(
@@ -30,15 +29,24 @@ public class StandardEnvironment implements Environment {
                         .map(NumberValue::d)
                         .reduce(1., (a, b) -> a * b));
             }
-        };
+        });
+    }};
 
-        env.put("+", plus);
-        env.put("*", multiplication);
+
+    public StandardEnvironment() {
+    }
+
+    public StandardEnvironment(Environment parent) {
+        this.parent = parent;
     }
 
     @Override
     public LispValue lookUpVariable(String name) {
-        return env.get(name);
+        if (env.containsKey(name)) {
+            return env.get(name);
+        } else {
+            return parent != null ? parent.lookUpVariable(name) : null;
+        }
     }
 
     @Override
@@ -48,6 +56,12 @@ public class StandardEnvironment implements Environment {
 
     @Override
     public Environment extendEnvironment(Map<String, LispValue> bindings) {
-        return null;
+        StandardEnvironment newEnvironment = new StandardEnvironment(this);
+
+        for (Map.Entry<String, LispValue> binding : bindings.entrySet()) {
+            newEnvironment.setVariable(binding.getKey(), binding.getValue());
+        }
+
+        return newEnvironment;
     }
 }

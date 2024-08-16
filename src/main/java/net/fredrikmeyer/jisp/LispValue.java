@@ -14,13 +14,13 @@ record StringValue(String s) implements LispValue {
 
 }
 
-record SymbolValue(String name) implements LispValue {}
+record SymbolValue(String name) implements LispValue {
 
-final class UserProcedure implements Procedure {
+}
 
-    UserProcedure(List<String> arguments, LispExpression body) {
+record UserProcedure(Environment environment, List<String> arguments,
+                     LispExpression body) implements Procedure {
 
-    }
 }
 
 non-sealed abstract class BuiltInProcedure implements Procedure {

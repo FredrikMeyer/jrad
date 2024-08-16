@@ -184,6 +184,18 @@ class TokenizerImplTest {
             new RightParen(3),
             new Token.EOF())
         );
+    }
 
+    @Test
+    public void canTokenizeAssignment() {
+        List<Token> result = new TokenizerImpl().tokenize("(set! a 2");
+
+        assertThat(result).isEqualTo(List.of(
+            new Token.LeftParen(0),
+            new Token.Symbol("set!", 1),
+            new Token.Symbol("a", 7),
+            new Token.NumberLiteral(2, 9),
+            new Token.EOF()
+        ));
     }
 }

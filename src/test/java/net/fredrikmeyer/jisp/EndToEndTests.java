@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.List;
 import java.util.stream.Stream;
+import org.codehaus.plexus.util.cli.Arg;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,8 +32,10 @@ public class EndToEndTests {
     private static Stream<Arguments> expressions() {
         return Stream.of(
             Arguments.of("(+ (* 2 3))", new NumberValue(6)),
-            Arguments.of("(+ 2 (* 2 3))", new NumberValue(8))
-           // Arguments.of("((lambda (x) (+ 1 x)) 1)", new NumberValue(2))
+            Arguments.of("(+ 2 (* 2 3))", new NumberValue(8)),
+            Arguments.of("((lambda (x) (+ 1 x)) 1)", new NumberValue(2)),
+            Arguments.of("(set! f (lambda (x) (+ x 1))", new SymbolValue("ok")),
+            Arguments.of("(begin (set! f (lambda (x) (+ x 1))) (f 2))", new NumberValue(3.0))
         );
     }
 }

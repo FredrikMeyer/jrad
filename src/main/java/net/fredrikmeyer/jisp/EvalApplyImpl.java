@@ -2,6 +2,8 @@ package net.fredrikmeyer.jisp;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.jetbrains.annotations.NotNull;
 
 public class EvalApplyImpl implements IEvalApply {
@@ -17,20 +19,36 @@ public class EvalApplyImpl implements IEvalApply {
                 case LispLiteral.StringLiteral s -> new StringValue(s.value());
             };
         } else if (isVariable(expression)) {
-            return environment.lookUpVariable(((LispSymbol) expression).value());
+            LispValue lispValue = environment.lookUpVariable(((LispSymbol) expression).value());
+            if (lispValue == null) {
+                return new SymbolValue("nil");
+            }
+            return lispValue;
         } else if (isQuoted(expression)) {
             return null; // TODO!
         } else if (isAssignment(expression)) {
             var name = ((LispSymbol) ((LispList) expression).cadr()).value();
             var value = ((LispList) expression).caddr();
             environment.setVariable(name, eval(value, environment));
+
+            // TODO: lage keywords for ok, nil, osv
             return new SymbolValue("ok");
+        } else if (isSequence(expression)) {
+            var expressions = ((LispList) expression).cdr().elements();
+
+            LispValue lastVal = null;
+            for (var e : expressions) {
+                lastVal = eval(e, environment);
+            }
+
+            return Objects.requireNonNull(lastVal);
         } else if (isLambda(expression)) {
             // Ugly, but this is Java :)
-            var arguments = ((LispList) ((LispList) expression).cadr()).elements().stream()
+            var arguments = ((LispList) ((LispList) expression).cadr())
+                .elements().stream()
                 .map(el -> ((LispSymbol) el).value()).toList();
-            var body = ((LispList) expression).cdr();
-            return new UserProcedure(arguments, body);
+            var body = ((LispList) expression).cdr().cadr();
+            return new UserProcedure(environment, arguments, body);
         } else if ((expression instanceof LispList l && l.length() > 0)) {
             // We are a function application
 
@@ -40,12 +58,31 @@ public class EvalApplyImpl implements IEvalApply {
                 throw new RuntimeException("...");
             }
 
-            var arguments = l.cdr().elements().stream().map(el -> eval(el, environment)).toList();
+            var arguments = l.cdr().elements()
+                .stream()
+                .map(el -> eval(el, environment))
+                .toList();
 
             return apply(p, arguments);
         }
 
         throw new RuntimeException("Should not get here: " + expression);
+    }
+
+    private boolean isSequence(LispExpression expression) {
+        // TODO extract logic
+        if (expression instanceof LispList lispList) {
+            if (lispList.length() < 1) {
+                return false;
+            }
+
+            if (!(lispList.car() instanceof LispSymbol symbol)) {
+                return false;
+            }
+
+            return symbol.value().equals("begin");
+        }
+        return false;
     }
 
     @Override
@@ -54,7 +91,12 @@ public class EvalApplyImpl implements IEvalApply {
             case BuiltInProcedure builtInProcedure ->
                 builtInProcedure.apply(arguments.toArray(LispValue[]::new));
             case UserProcedure userProcedure -> {
-                throw new RuntimeException("should not get here");
+                var newFrame = IntStream.range(0, arguments.size())
+                    .boxed()
+                    .collect(Collectors.toMap(userProcedure.arguments()::get, arguments::get));
+                var newEnv = userProcedure.environment().extendEnvironment(newFrame);
+
+                yield eval(userProcedure.body(), newEnv);
             }
         };
     }

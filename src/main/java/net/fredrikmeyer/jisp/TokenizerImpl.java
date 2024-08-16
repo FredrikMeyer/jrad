@@ -9,9 +9,6 @@ public class TokenizerImpl implements Tokenizer {
     private int position = 0;
     private String input;
 
-    public TokenizerImpl() {
-    }
-
     @Override
     public List<Token> tokenize(String input) {
         position = 0;
@@ -52,7 +49,8 @@ public class TokenizerImpl implements Tokenizer {
             || currentChar == '_'
             || currentChar == '-'
             || currentChar == '+'
-            || currentChar == '*';
+            || currentChar == '*'
+            || currentChar == '!';
     }
 
     private void advance() {
