@@ -1,4 +1,4 @@
-package net.fredrikmeyer.jisp;
+package net.fredrikmeyer.jisp.tokenizer;
 
 import java.util.Objects;
 
@@ -30,7 +30,7 @@ public sealed interface Token {
         private final String value;
         private final int position;
 
-        Symbol(String value, int position) {
+        public Symbol(String value, int position) {
             this.value = value;
             this.position = position;
         }

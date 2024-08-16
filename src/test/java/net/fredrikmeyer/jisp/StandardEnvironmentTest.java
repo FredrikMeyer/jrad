@@ -3,6 +3,8 @@ package net.fredrikmeyer.jisp;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
+import net.fredrikmeyer.jisp.environment.Environment;
+import net.fredrikmeyer.jisp.environment.StandardEnvironment;
 import org.junit.jupiter.api.Test;
 
 class StandardEnvironmentTest {

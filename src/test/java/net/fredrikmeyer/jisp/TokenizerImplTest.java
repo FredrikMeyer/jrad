@@ -1,7 +1,9 @@
 package net.fredrikmeyer.jisp;
 
-import net.fredrikmeyer.jisp.Token.LeftParen;
-import net.fredrikmeyer.jisp.Token.RightParen;
+import net.fredrikmeyer.jisp.tokenizer.Token;
+import net.fredrikmeyer.jisp.tokenizer.Token.LeftParen;
+import net.fredrikmeyer.jisp.tokenizer.Token.RightParen;
+import net.fredrikmeyer.jisp.tokenizer.TokenizerImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

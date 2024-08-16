@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
-import net.fredrikmeyer.jisp.Token.EOF;
-import net.fredrikmeyer.jisp.Token.LeftParen;
-import net.fredrikmeyer.jisp.Token.NumberLiteral;
-import net.fredrikmeyer.jisp.Token.RightParen;
-import net.fredrikmeyer.jisp.Token.StringLiteral;
-import net.fredrikmeyer.jisp.Token.Symbol;
+import net.fredrikmeyer.jisp.tokenizer.Token;
+import net.fredrikmeyer.jisp.tokenizer.Token.EOF;
+import net.fredrikmeyer.jisp.tokenizer.Token.NumberLiteral;
+import net.fredrikmeyer.jisp.tokenizer.Token.StringLiteral;
+import net.fredrikmeyer.jisp.tokenizer.Token.Symbol;
 import org.jetbrains.annotations.NotNull;
 
 public class ParserImpl implements Parser {

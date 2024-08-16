@@ -1,4 +1,4 @@
-package net.fredrikmeyer.jisp;
+package net.fredrikmeyer.jisp.tokenizer;
 
 import java.util.List;
 

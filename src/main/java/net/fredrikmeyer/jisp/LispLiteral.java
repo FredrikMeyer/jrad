@@ -15,7 +15,7 @@ public sealed interface LispLiteral extends LispExpression permits LispLiteral.N
 
         @Override
         public String toString() {
-            return value;
+            return "\"" + value + "\"";
         }
 
     }

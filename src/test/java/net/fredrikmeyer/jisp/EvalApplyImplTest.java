@@ -1,5 +1,6 @@
 package net.fredrikmeyer.jisp;
 
+import net.fredrikmeyer.jisp.environment.Environment;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

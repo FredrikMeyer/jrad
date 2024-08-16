@@ -16,4 +16,13 @@ class LispExpressionTest {
 
         assertThat(expression).isEqualTo("(+ 1.0 2.0)");
     }
+
+    @Test
+    public void stringsStringifiesNicely() {
+        String expression = new LispList(List.of(new LispSymbol("+"),
+            new LispLiteral.StringLiteral("hei"),
+            new LispLiteral.NumberLiteral(2.))).toString();
+
+        assertThat(expression).isEqualTo("(+ \"hei\" 2.0)");
+    }
 }

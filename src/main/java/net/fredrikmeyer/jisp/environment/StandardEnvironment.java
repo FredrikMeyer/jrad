@@ -1,9 +1,12 @@
-package net.fredrikmeyer.jisp;
+package net.fredrikmeyer.jisp.environment;
 
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import net.fredrikmeyer.jisp.BuiltInProcedure;
+import net.fredrikmeyer.jisp.LispValue;
+import net.fredrikmeyer.jisp.NumberValue;
 
 public class StandardEnvironment implements Environment {
 
@@ -12,7 +15,7 @@ public class StandardEnvironment implements Environment {
     private final Map<String, LispValue> env = new HashMap<>() {{
         put("+", new BuiltInProcedure() {
             @Override
-            LispValue apply(LispValue... values) {
+            public LispValue apply(LispValue... values) {
                 return new NumberValue(
                     Arrays.stream(values)
                         .map(t -> (NumberValue) t)
@@ -22,7 +25,7 @@ public class StandardEnvironment implements Environment {
         });
         put("*", new BuiltInProcedure() {
             @Override
-            LispValue apply(LispValue... values) {
+            public LispValue apply(LispValue... values) {
                 return new NumberValue(
                     Arrays.stream(values)
                         .map(t -> (NumberValue) t)
