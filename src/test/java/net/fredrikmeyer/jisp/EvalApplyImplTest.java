@@ -1,5 +1,8 @@
 package net.fredrikmeyer.jisp;
 
+import net.fredrikmeyer.jisp.LispValue.NumberValue;
+import net.fredrikmeyer.jisp.LispValue.Procedure;
+import net.fredrikmeyer.jisp.LispValue.StringValue;
 import net.fredrikmeyer.jisp.environment.Environment;
 import org.junit.jupiter.api.Test;
 

@@ -50,7 +50,8 @@ public class TokenizerImpl implements Tokenizer {
             || currentChar == '-'
             || currentChar == '+'
             || currentChar == '*'
-            || currentChar == '!';
+            || currentChar == '!'
+            || currentChar == '=' || currentChar == '<' || currentChar == '>';
     }
 
     private void advance() {

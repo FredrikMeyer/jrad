@@ -200,4 +200,19 @@ class TokenizerImplTest {
             new Token.EOF()
         ));
     }
+
+    @Test
+    public void canParseEquals() {
+        List<Token> result = new TokenizerImpl().tokenize("(= 1 2 3)");
+
+        assertThat(result).containsExactly(
+            new Token.LeftParen(0),
+            new Token.Symbol("=", 1),
+            new Token.NumberLiteral(1, 3),
+            new Token.NumberLiteral(2, 5),
+            new Token.NumberLiteral(3, 7),
+            new Token.RightParen(8),
+            new Token.EOF()
+        );
+    }
 }

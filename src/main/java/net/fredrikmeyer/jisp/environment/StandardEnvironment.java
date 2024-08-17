@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import net.fredrikmeyer.jisp.BuiltInProcedure;
 import net.fredrikmeyer.jisp.LispValue;
-import net.fredrikmeyer.jisp.NumberValue;
 
 public class StandardEnvironment implements Environment {
 
@@ -32,6 +31,31 @@ public class StandardEnvironment implements Environment {
                         .map(NumberValue::d)
                         .reduce(1., (a, b) -> a * b));
             }
+        });
+
+        put("=", new BuiltInProcedure() {
+            @Override
+            public LispValue apply(LispValue... values) {
+                return new BoolValue(Arrays.stream(values).distinct().count() <= 1);
+            }
+        });
+
+        put("<", new BuiltInProcedure() {
+            @Override
+            public LispValue apply(LispValue... values) {
+                // true if values are strictly decreasing
+                boolean isDecreasing = true;
+                NumberValue prev = null;
+                for (LispValue val : values) {
+                    if (prev != null) {
+                        isDecreasing = isDecreasing && ((NumberValue) val).d() < prev.d();
+                    }
+                    prev = (NumberValue) val;
+                }
+                return new BoolValue(isDecreasing);
+            }
+
+            ;
         });
     }};
 

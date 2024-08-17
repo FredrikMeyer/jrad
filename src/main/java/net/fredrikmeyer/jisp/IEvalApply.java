@@ -1,6 +1,7 @@
 package net.fredrikmeyer.jisp;
 
 import java.util.List;
+import net.fredrikmeyer.jisp.LispValue.Procedure;
 import net.fredrikmeyer.jisp.environment.Environment;
 
 public interface IEvalApply {

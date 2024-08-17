@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import net.fredrikmeyer.jisp.LispValue.NumberValue;
+import net.fredrikmeyer.jisp.LispValue.Procedure;
+import net.fredrikmeyer.jisp.LispValue.StringValue;
+import net.fredrikmeyer.jisp.LispValue.SymbolValue;
 import net.fredrikmeyer.jisp.environment.Environment;
 import org.jetbrains.annotations.NotNull;
 
