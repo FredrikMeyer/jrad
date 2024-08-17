@@ -48,7 +48,8 @@ public class EndToEndTests {
             Arguments.of("(< 5 4 3)", new BoolValue(true)),
             Arguments.of("(< 1 2 3)", new BoolValue(false)),
             Arguments.of("(- 5 2)", new NumberValue(3)),
-            Arguments.of("(- 5 3 1)", new NumberValue(1))
+            Arguments.of("(- 5 3 1)", new NumberValue(1)),
+            Arguments.of("(if (= 3 3) 1 2)", new NumberValue(1))
         );
     }
 

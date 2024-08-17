@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 // Define a class for lists of expressions (e.g., function calls, nested lists)
 non-sealed public class LispList implements LispExpression {
+
     private final List<LispExpression> elements;
 
     public LispList(List<LispExpression> elements) {
@@ -32,6 +33,10 @@ non-sealed public class LispList implements LispExpression {
         return elements.get(2);
     }
 
+    public LispExpression cadddr() {
+        return elements.get(3);
+    }
+
     public LispList cdr() {
         return new LispList(elements.subList(1, elements.size()));
     }
@@ -47,18 +52,22 @@ non-sealed public class LispList implements LispExpression {
     @Override
     public String toString() {
         String collect = elements.stream()
-                .map(LispExpression::toString)
-                .collect(Collectors.joining(" "));
+            .map(LispExpression::toString)
+            .collect(Collectors.joining(" "));
         return "(" + collect + ')';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         LispList lispList = (LispList) o;
         return Objects.equals(elements,
-                lispList.elements);
+            lispList.elements);
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import net.fredrikmeyer.jisp.LispValue.BoolValue;
 import net.fredrikmeyer.jisp.LispValue.NumberValue;
 import net.fredrikmeyer.jisp.LispValue.Procedure;
 import net.fredrikmeyer.jisp.LispValue.StringValue;
@@ -54,6 +55,16 @@ public class EvalApplyImpl implements IEvalApply {
                 .map(el -> ((LispSymbol) el).value()).toList();
             var body = ((LispList) expression).cdr().cadr();
             return new UserProcedure(environment, arguments, body);
+        } else if (isConditional(expression)) {
+            var condition = eval(((LispList) expression).cadr(), environment);
+
+            if (condition instanceof BoolValue v) {
+                if (v.value()) {
+                    return eval(((LispList) expression).caddr(), environment);
+                } else {
+                    return eval(((LispList) expression).cadddr(), environment);
+                }
+            }
         } else if ((expression instanceof LispList l && l.length() > 0)) {
             // We are a function application
 
@@ -72,6 +83,21 @@ public class EvalApplyImpl implements IEvalApply {
         }
 
         throw new RuntimeException("Should not get here: " + expression);
+    }
+
+    private boolean isConditional(LispExpression expression) {
+        if (expression instanceof LispList lispList) {
+            if (lispList.length() <= 3) {
+                return false;
+            }
+
+            if (!(lispList.car() instanceof LispSymbol symbol)) {
+                return false;
+            }
+
+            return symbol.value().equals("if");
+        }
+        return false;
     }
 
     private boolean isSequence(LispExpression expression) {
