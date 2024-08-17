@@ -1,9 +1,13 @@
-package net.fredrikmeyer.jisp;
+package net.fredrikmeyer.jisp.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
+import net.fredrikmeyer.jisp.LispExpression;
+import net.fredrikmeyer.jisp.LispList;
+import net.fredrikmeyer.jisp.LispLiteral;
+import net.fredrikmeyer.jisp.LispSymbol;
 import net.fredrikmeyer.jisp.tokenizer.Token;
 import net.fredrikmeyer.jisp.tokenizer.Token.EOF;
 import net.fredrikmeyer.jisp.tokenizer.Token.NumberLiteral;

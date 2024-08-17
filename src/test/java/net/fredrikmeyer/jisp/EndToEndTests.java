@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Stream;
 import net.fredrikmeyer.jisp.environment.Environment;
 import net.fredrikmeyer.jisp.environment.StandardEnvironment;
+import net.fredrikmeyer.jisp.parser.Parser;
+import net.fredrikmeyer.jisp.parser.ParserImpl;
 import net.fredrikmeyer.jisp.tokenizer.Token;
 import net.fredrikmeyer.jisp.tokenizer.Tokenizer;
 import net.fredrikmeyer.jisp.tokenizer.TokenizerImpl;

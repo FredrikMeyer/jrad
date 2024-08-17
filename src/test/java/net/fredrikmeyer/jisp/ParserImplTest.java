@@ -1,5 +1,6 @@
 package net.fredrikmeyer.jisp;
 
+import net.fredrikmeyer.jisp.parser.ParserImpl;
 import net.fredrikmeyer.jisp.tokenizer.Token;
 import net.fredrikmeyer.jisp.tokenizer.TokenizerImpl;
 import org.junit.jupiter.api.Test;
