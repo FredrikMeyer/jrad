@@ -4,6 +4,8 @@ package net.fredrikmeyer.jisp.environment;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import net.fredrikmeyer.jisp.BuiltInProcedure;
 import net.fredrikmeyer.jisp.LispValue;
 
@@ -22,6 +24,19 @@ public class StandardEnvironment implements Environment {
                         .reduce(0.0, Double::sum));
             }
         });
+
+        put("-", new BuiltInProcedure() {
+            @Override
+            public LispValue apply(LispValue... values) {
+                return new NumberValue(
+                    ((NumberValue) values[0]).d() - Arrays.stream(values)
+                        .skip(1)
+                        .map(t -> (NumberValue) t)
+                        .map(NumberValue::d)
+                        .reduce(0.0, Double::sum));
+            }
+        });
+
         put("*", new BuiltInProcedure() {
             @Override
             public LispValue apply(LispValue... values) {

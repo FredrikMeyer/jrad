@@ -46,7 +46,9 @@ public class EndToEndTests {
             Arguments.of("(set! f (lambda (x) (+ x 1))", new SymbolValue("ok")),
             Arguments.of("(begin (set! f (lambda (x) (+ x 1))) (f 2))", new NumberValue(3.0)),
             Arguments.of("(< 5 4 3)", new BoolValue(true)),
-            Arguments.of("(< 1 2 3)", new BoolValue(false))
+            Arguments.of("(< 1 2 3)", new BoolValue(false)),
+            Arguments.of("(- 5 2)", new NumberValue(3)),
+            Arguments.of("(- 5 3 1)", new NumberValue(1))
         );
     }
 
