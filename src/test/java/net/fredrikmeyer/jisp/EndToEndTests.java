@@ -14,6 +14,7 @@ import net.fredrikmeyer.jisp.parser.ParserImpl;
 import net.fredrikmeyer.jisp.tokenizer.Token;
 import net.fredrikmeyer.jisp.tokenizer.Tokenizer;
 import net.fredrikmeyer.jisp.tokenizer.TokenizerImpl;
+import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -49,7 +50,16 @@ public class EndToEndTests {
             Arguments.of("(< 1 2 3)", new BoolValue(false)),
             Arguments.of("(- 5 2)", new NumberValue(3)),
             Arguments.of("(- 5 3 1)", new NumberValue(1)),
-            Arguments.of("(if (= 3 3) 1 2)", new NumberValue(1))
+            Arguments.of("(if (= 3 3) 1 2)", new NumberValue(1)),
+            Arguments.of( """
+                (begin (set! f (lambda (n)
+                                (if (= n 0)
+                                     1
+                                     (if (= n 1)
+                                         1
+                                         (+ (f (- n 1)) (f (- n 2)))))))
+                       (f 10)
+                """, new NumberValue(89))
         );
     }
 
