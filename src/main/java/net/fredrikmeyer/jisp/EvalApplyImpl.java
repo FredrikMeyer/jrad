@@ -31,8 +31,7 @@ public class EvalApplyImpl implements IEvalApply {
             }
             return lispValue;
         } else if (isQuoted(expression)) {
-            LispExpression restOfIt = ((LispList) expression).cadr();
-            return eval(restOfIt, environment);
+            return ((LispList) expression).cadr();
         } else if (isAssignment(expression)) {
             var name = ((LispSymbol) ((LispList) expression).cadr()).value();
             var value = ((LispList) expression).caddr();

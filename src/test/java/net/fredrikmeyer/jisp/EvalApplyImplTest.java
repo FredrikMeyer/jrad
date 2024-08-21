@@ -93,4 +93,15 @@ class EvalApplyImplTest {
 
         assertThat(res).isInstanceOf(Procedure.class);
     }
+
+    @Test
+    public void quotedReturnsList() {
+        EvalApplyImpl evalApply = new EvalApplyImpl();
+
+        var res = evalApply.eval(new LispList(
+                List.of(new LispSymbol("quote"), new LispList(List.of(new LispSymbol("x"))))),
+            dummyEnvironment());
+
+        assertThat(res).isEqualTo(new LispList(List.of(new LispSymbol("x"))));
+    }
 }
