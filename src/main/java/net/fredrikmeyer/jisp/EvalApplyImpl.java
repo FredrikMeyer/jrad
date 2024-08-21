@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispExpression.Procedure;
-import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
-import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
+import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.environment.Environment;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +17,7 @@ public class EvalApplyImpl implements IEvalApply {
         Objects.requireNonNull(expression);
 
         if (expression instanceof LispLiteral literal) {
-            return switch (literal) {
-                case NumberLiteral n -> n;
-                case StringLiteral s -> s;
-                case BoolValue boolValue -> boolValue;
-            };
+            return literal;
         } else if (isVariable(expression)) {
             LispExpression lispValue = environment.lookUpVariable(((LispSymbol) expression).value());
             if (lispValue == null) {
