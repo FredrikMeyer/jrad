@@ -14,7 +14,7 @@ public interface REPL {
      * @param input the command to evaluate
      * @return the result of the evaluation
      */
-    Object evaluate(String input);
+    LispExpression evaluate(String input);
 
     /**
      * Prints the output to the user.

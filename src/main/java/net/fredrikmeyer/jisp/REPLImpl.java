@@ -3,7 +3,6 @@ package net.fredrikmeyer.jisp;
 import java.util.Scanner;
 import net.fredrikmeyer.jisp.environment.Environment;
 import net.fredrikmeyer.jisp.environment.StandardEnvironment;
-import net.fredrikmeyer.jisp.parser.Parser;
 import net.fredrikmeyer.jisp.parser.ParserImpl;
 import net.fredrikmeyer.jisp.tokenizer.TokenizerImpl;
 
@@ -21,11 +20,10 @@ public class REPLImpl implements REPL {
     }
 
     @Override
-    public Object evaluate(String input) {
+    public LispExpression evaluate(String input) {
         LispExpression parse = new ParserImpl().parse(new TokenizerImpl().tokenize(input));
 
-        var res = evalApply.eval(parse, env);
-        return "Evaluated: " + res;
+        return evalApply.eval(parse, env);
     }
 
     @Override
@@ -41,8 +39,13 @@ public class REPLImpl implements REPL {
                 System.out.println("Exiting REPL. Goodbye!");
                 break;
             }
-            Object result = evaluate(input);
-            printOutput(result);
+            try {
+                LispExpression result = evaluate(input);
+                printOutput(result);
+            }
+            catch (Exception e) {
+                printOutput(e);
+            }
         }
     }
 }

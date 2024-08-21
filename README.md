@@ -6,6 +6,18 @@
 
 Ever dreamed of writing Lisp with the robust elegance of Java? Neither did we, but we did it anyway. Welcome to ráð, our charming endeavor to blend the symphony of parentheses with Java's structured sophistication.
 
+## Building
+
+```
+mvn package
+```
+
+## Running
+
+```
+java -jar target/jrad-1.0-SNAPSHOT.jar
+```
+
 ## What the heck is ráð?
 
 In the land of ice and fire, "ráð" means "advice." And we're here to advise you on the best way to confuse your friends and scare off potential dates: by writing Lisp in Java! Think of it as your quirky Icelandic cousin who just can't stop talking about parentheses.

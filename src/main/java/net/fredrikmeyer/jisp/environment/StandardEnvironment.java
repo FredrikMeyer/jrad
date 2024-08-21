@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import net.fredrikmeyer.jisp.BuiltInProcedure;
 import net.fredrikmeyer.jisp.LispExpression;
-import net.fredrikmeyer.jisp.LispLiteral;
 import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 
@@ -15,7 +14,7 @@ public class StandardEnvironment implements Environment {
     private Environment parent;
 
     private final Map<String, LispExpression> env = new HashMap<>() {{
-        put("+", new BuiltInProcedure() {
+        put("+", new BuiltInProcedure("+") {
             @Override
             public LispExpression apply(LispExpression... values) {
                 return new NumberLiteral(
@@ -26,7 +25,7 @@ public class StandardEnvironment implements Environment {
             }
         });
 
-        put("-", new BuiltInProcedure() {
+        put("-", new BuiltInProcedure("-") {
             @Override
             public LispExpression apply(LispExpression... values) {
                 return new NumberLiteral(
@@ -38,7 +37,7 @@ public class StandardEnvironment implements Environment {
             }
         });
 
-        put("*", new BuiltInProcedure() {
+        put("*", new BuiltInProcedure("*") {
             @Override
             public LispExpression apply(LispExpression... values) {
                 return new NumberLiteral(
@@ -49,14 +48,14 @@ public class StandardEnvironment implements Environment {
             }
         });
 
-        put("=", new BuiltInProcedure() {
+        put("=", new BuiltInProcedure("=") {
             @Override
             public LispExpression apply(LispExpression... values) {
                 return new BoolValue(Arrays.stream(values).distinct().count() <= 1);
             }
         });
 
-        put("<", new BuiltInProcedure() {
+        put("<", new BuiltInProcedure("<") {
             @Override
             public LispExpression apply(LispExpression... values) {
                 // true if values are strictly decreasing

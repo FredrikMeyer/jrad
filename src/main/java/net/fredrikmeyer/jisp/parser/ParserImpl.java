@@ -66,15 +66,15 @@ public class ParserImpl implements Parser {
                     if (!stack.isEmpty()) {
                         stack.peek().append(parseNumberLiteral(numberLiteral));
                     } else {
-                        //exp = parseNumberLiteral(numberLiteral);
-                        throw new RuntimeException("Should not get here.");
+                        throw new RuntimeException(
+                            "Should not get here. Illegal expression at position: "
+                            + numberLiteral.position());
                     }
                 }
                 case Token.StringLiteral stringLiteral -> {
                     if (!stack.isEmpty()) {
                         stack.peek().append(parseStringLiteral(stringLiteral));
                     } else {
-                        //exp = parseStringLiteral(stringLiteral);
                         throw new RuntimeException("Should not get here.");
                     }
                 }
@@ -82,7 +82,6 @@ public class ParserImpl implements Parser {
                     if (!stack.isEmpty()) {
                         stack.peek().append(new LispSymbol(symbol.value()));
                     } else {
-                        //exp = new LispSymbol(symbol.value());
                         throw new RuntimeException("Should not get here.");
                     }
                 }
