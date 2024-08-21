@@ -1,10 +1,10 @@
 package net.fredrikmeyer.jisp.environment;
 
 import java.util.Map;
-import net.fredrikmeyer.jisp.LispValue;
+import net.fredrikmeyer.jisp.LispExpression;
 
 public interface Environment {
-    LispValue lookUpVariable(String name);
-    void setVariable(String name, LispValue value);
-    Environment extendEnvironment(Map<String, LispValue> bindings);
+    LispExpression lookUpVariable(String name);
+    void setVariable(String name, LispExpression value);
+    Environment extendEnvironment(Map<String, LispExpression> bindings);
 }

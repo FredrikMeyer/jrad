@@ -4,68 +4,69 @@ package net.fredrikmeyer.jisp.environment;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import net.fredrikmeyer.jisp.BuiltInProcedure;
-import net.fredrikmeyer.jisp.LispValue;
+import net.fredrikmeyer.jisp.LispExpression;
+import net.fredrikmeyer.jisp.LispLiteral;
+import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
+import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 
 public class StandardEnvironment implements Environment {
 
     private Environment parent;
 
-    private final Map<String, LispValue> env = new HashMap<>() {{
+    private final Map<String, LispExpression> env = new HashMap<>() {{
         put("+", new BuiltInProcedure() {
             @Override
-            public LispValue apply(LispValue... values) {
-                return new NumberValue(
+            public LispExpression apply(LispExpression... values) {
+                return new NumberLiteral(
                     Arrays.stream(values)
-                        .map(t -> (NumberValue) t)
-                        .map(NumberValue::d)
+                        .map(t -> (NumberLiteral) t)
+                        .map(NumberLiteral::value)
                         .reduce(0.0, Double::sum));
             }
         });
 
         put("-", new BuiltInProcedure() {
             @Override
-            public LispValue apply(LispValue... values) {
-                return new NumberValue(
-                    ((NumberValue) values[0]).d() - Arrays.stream(values)
+            public LispExpression apply(LispExpression... values) {
+                return new NumberLiteral(
+                    ((NumberLiteral) values[0]).value() - Arrays.stream(values)
                         .skip(1)
-                        .map(t -> (NumberValue) t)
-                        .map(NumberValue::d)
+                        .map(t -> (NumberLiteral) t)
+                        .map(NumberLiteral::value)
                         .reduce(0.0, Double::sum));
             }
         });
 
         put("*", new BuiltInProcedure() {
             @Override
-            public LispValue apply(LispValue... values) {
-                return new NumberValue(
+            public LispExpression apply(LispExpression... values) {
+                return new NumberLiteral(
                     Arrays.stream(values)
-                        .map(t -> (NumberValue) t)
-                        .map(NumberValue::d)
+                        .map(t -> (NumberLiteral) t)
+                        .map(NumberLiteral::value)
                         .reduce(1., (a, b) -> a * b));
             }
         });
 
         put("=", new BuiltInProcedure() {
             @Override
-            public LispValue apply(LispValue... values) {
+            public LispExpression apply(LispExpression... values) {
                 return new BoolValue(Arrays.stream(values).distinct().count() <= 1);
             }
         });
 
         put("<", new BuiltInProcedure() {
             @Override
-            public LispValue apply(LispValue... values) {
+            public LispExpression apply(LispExpression... values) {
                 // true if values are strictly decreasing
                 boolean isDecreasing = true;
-                NumberValue prev = null;
-                for (LispValue val : values) {
+                NumberLiteral prev = null;
+                for (LispExpression val : values) {
                     if (prev != null) {
-                        isDecreasing = isDecreasing && ((NumberValue) val).d() < prev.d();
+                        isDecreasing = isDecreasing && ((NumberLiteral) val).value() < prev.value();
                     }
-                    prev = (NumberValue) val;
+                    prev = (NumberLiteral) val;
                 }
                 return new BoolValue(isDecreasing);
             }
@@ -83,7 +84,7 @@ public class StandardEnvironment implements Environment {
     }
 
     @Override
-    public LispValue lookUpVariable(String name) {
+    public LispExpression lookUpVariable(String name) {
         if (env.containsKey(name)) {
             return env.get(name);
         } else {
@@ -92,15 +93,15 @@ public class StandardEnvironment implements Environment {
     }
 
     @Override
-    public void setVariable(String name, LispValue value) {
+    public void setVariable(String name, LispExpression value) {
         env.put(name, value);
     }
 
     @Override
-    public Environment extendEnvironment(Map<String, LispValue> bindings) {
+    public Environment extendEnvironment(Map<String, LispExpression> bindings) {
         StandardEnvironment newEnvironment = new StandardEnvironment(this);
 
-        for (Map.Entry<String, LispValue> binding : bindings.entrySet()) {
+        for (Map.Entry<String, LispExpression> binding : bindings.entrySet()) {
             newEnvironment.setVariable(binding.getKey(), binding.getValue());
         }
 

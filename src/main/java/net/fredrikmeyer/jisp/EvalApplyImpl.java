@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import net.fredrikmeyer.jisp.LispValue.BoolValue;
-import net.fredrikmeyer.jisp.LispValue.NumberValue;
-import net.fredrikmeyer.jisp.LispValue.Procedure;
-import net.fredrikmeyer.jisp.LispValue.StringValue;
-import net.fredrikmeyer.jisp.LispValue.SymbolValue;
+import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
+import net.fredrikmeyer.jisp.LispExpression.Procedure;
+import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
+import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
 import net.fredrikmeyer.jisp.environment.Environment;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,18 +15,19 @@ public class EvalApplyImpl implements IEvalApply {
 
     @NotNull
     @Override
-    public LispValue eval(LispExpression expression, Environment environment) {
+    public LispExpression eval(LispExpression expression, Environment environment) {
         Objects.requireNonNull(expression);
 
         if (expression instanceof LispLiteral literal) {
             return switch (literal) {
-                case LispLiteral.NumberLiteral n -> new NumberValue(n.value());
-                case LispLiteral.StringLiteral s -> new StringValue(s.value());
+                case NumberLiteral n -> n;
+                case StringLiteral s -> s;
+                case BoolValue boolValue -> boolValue;
             };
         } else if (isVariable(expression)) {
-            LispValue lispValue = environment.lookUpVariable(((LispSymbol) expression).value());
+            LispExpression lispValue = environment.lookUpVariable(((LispSymbol) expression).value());
             if (lispValue == null) {
-                return new SymbolValue("nil");
+                return new LispSymbol("nil");
             }
             return lispValue;
         } else if (isQuoted(expression)) {
@@ -39,11 +39,11 @@ public class EvalApplyImpl implements IEvalApply {
             environment.setVariable(name, eval(value, environment));
 
             // TODO: lage keywords for ok, nil, osv
-            return new SymbolValue("ok");
+            return new LispSymbol("ok");
         } else if (isSequence(expression)) {
             var expressions = ((LispList) expression).cdr().elements();
 
-            LispValue lastVal = null;
+            LispExpression lastVal = null;
             for (var e : expressions) {
                 lastVal = eval(e, environment);
             }
@@ -118,10 +118,10 @@ public class EvalApplyImpl implements IEvalApply {
     }
 
     @Override
-    public LispValue apply(Procedure procedure, List<LispValue> arguments) {
+    public LispExpression apply(Procedure procedure, List<LispExpression> arguments) {
         return switch (procedure) {
             case BuiltInProcedure builtInProcedure ->
-                builtInProcedure.apply(arguments.toArray(LispValue[]::new));
+                builtInProcedure.apply(arguments.toArray(LispExpression[]::new));
             case UserProcedure userProcedure -> {
                 var newFrame = IntStream.range(0, arguments.size())
                     .boxed()

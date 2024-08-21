@@ -1,16 +1,15 @@
 package net.fredrikmeyer.jisp;
 
-import net.fredrikmeyer.jisp.LispValue.NumberValue;
-import net.fredrikmeyer.jisp.LispValue.Procedure;
-import net.fredrikmeyer.jisp.LispValue.StringValue;
-import net.fredrikmeyer.jisp.environment.Environment;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import net.fredrikmeyer.jisp.LispExpression.Procedure;
+import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
+import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
+import net.fredrikmeyer.jisp.environment.Environment;
+import org.junit.jupiter.api.Test;
 
 class EvalApplyImplTest {
 
@@ -20,23 +19,23 @@ class EvalApplyImplTest {
 
         var res = evalApply.eval(new LispLiteral.StringLiteral("hei"), dummyEnvironment());
 
-        assertThat(res).isEqualTo(new StringValue("hei"));
+        assertThat(res).isEqualTo(new StringLiteral("hei"));
     }
 
     private static Environment dummyEnvironment() {
         return new Environment() {
             @Override
-            public LispValue lookUpVariable(String name) {
+            public LispExpression lookUpVariable(String name) {
                 return null;
             }
 
             @Override
-            public void setVariable(String name, LispValue value) {
+            public void setVariable(String name, LispExpression value) {
 
             }
 
             @Override
-            public Environment extendEnvironment(Map<String, LispValue> bindings) {
+            public Environment extendEnvironment(Map<String, LispExpression> bindings) {
                 return null;
             }
         };
@@ -48,7 +47,7 @@ class EvalApplyImplTest {
 
         var res = evalApply.eval(new LispLiteral.NumberLiteral(120.4), dummyEnvironment());
 
-        assertThat(res).isEqualTo(new NumberValue(120.4));
+        assertThat(res).isEqualTo(new NumberLiteral(120.4));
     }
 
     @Test
@@ -56,20 +55,20 @@ class EvalApplyImplTest {
         EvalApplyImpl evalApply = new EvalApplyImpl();
 
         Environment environment = new Environment() {
-            private final Map<String, LispValue> env = new HashMap<>();
+            private final Map<String, LispExpression> env = new HashMap<>();
 
             @Override
-            public LispValue lookUpVariable(String name) {
+            public LispExpression lookUpVariable(String name) {
                 return env.get(name);
             }
 
             @Override
-            public void setVariable(String name, LispValue value) {
+            public void setVariable(String name, LispExpression value) {
                 env.put(name, value);
             }
 
             @Override
-            public Environment extendEnvironment(Map<String, LispValue> bindings) {
+            public Environment extendEnvironment(Map<String, LispExpression> bindings) {
                 return null;
             }
         };
@@ -79,7 +78,7 @@ class EvalApplyImplTest {
                     new LispLiteral.NumberLiteral(120.4))),
             environment);
 
-        assertThat(environment.lookUpVariable("x")).isEqualTo(new NumberValue(120.4));
+        assertThat(environment.lookUpVariable("x")).isEqualTo(new NumberLiteral(120.4));
     }
 
     @Test

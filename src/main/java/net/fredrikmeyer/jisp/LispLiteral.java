@@ -1,7 +1,11 @@
 package net.fredrikmeyer.jisp;
 
-public sealed interface LispLiteral extends LispExpression permits LispLiteral.NumberLiteral,
-    LispLiteral.StringLiteral {
+import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
+import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
+import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
+
+public sealed interface LispLiteral extends LispExpression permits BoolValue, NumberLiteral,
+    StringLiteral {
 
     record NumberLiteral(Double value) implements LispLiteral {
 
@@ -18,5 +22,13 @@ public sealed interface LispLiteral extends LispExpression permits LispLiteral.N
             return "\"" + value + "\"";
         }
 
+    }
+
+    record BoolValue(boolean value) implements LispLiteral {
+
+        @Override
+        public String toString() {
+            return value ? "#t" : "#f";
+        }
     }
 }
