@@ -31,7 +31,8 @@ public class EvalApplyImpl implements IEvalApply {
             }
             return lispValue;
         } else if (isQuoted(expression)) {
-            return null; // TODO!
+            LispExpression restOfIt = ((LispList) expression).cadr();
+            return eval(restOfIt, environment);
         } else if (isAssignment(expression)) {
             var name = ((LispSymbol) ((LispList) expression).cadr()).value();
             var value = ((LispList) expression).caddr();
@@ -137,8 +138,7 @@ public class EvalApplyImpl implements IEvalApply {
     }
 
     private boolean isQuoted(LispExpression expression) {
-        // TODO!
-        return false;
+        return startsWithGivenSymbol(expression, "quote");
     }
 
     private boolean isAssignment(LispExpression expression) {
@@ -158,8 +158,6 @@ public class EvalApplyImpl implements IEvalApply {
 
     private boolean isLambda(LispExpression expression) {
         if (expression instanceof LispList lispList) {
-            // (lambda (x) (set! a 2) (+ x 3))
-
             if (!(lispList.car() instanceof LispSymbol symbol)) {
                 return false;
             }
@@ -172,7 +170,22 @@ public class EvalApplyImpl implements IEvalApply {
                 return false;
             }
 
-            return arguments.elements().stream().allMatch(e -> e instanceof LispSymbol);
+            if (!arguments.elements().stream().allMatch(e -> e instanceof LispSymbol)) {
+                throw new IllegalArgumentException("All args must be symbol");
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    private boolean startsWithGivenSymbol(LispExpression expression, String symbol) {
+        if (expression instanceof LispList lispList) {
+            if (!(lispList.car() instanceof LispSymbol s)) {
+                return false;
+            }
+
+            return s.value().equals(symbol);
         }
         return false;
     }

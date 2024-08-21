@@ -2,6 +2,7 @@ package net.fredrikmeyer.jisp;
 
 import net.fredrikmeyer.jisp.parser.ParserImpl;
 import net.fredrikmeyer.jisp.tokenizer.Token;
+import net.fredrikmeyer.jisp.tokenizer.Token.EOF;
 import net.fredrikmeyer.jisp.tokenizer.TokenizerImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ParserImplTest {
 
@@ -90,7 +92,10 @@ class ParserImplTest {
     }
 
     @Test
-    public void fff() {
+    public void exceptionWhenNoTokensPassed() {
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+            () -> new ParserImpl().parse(List.of(new EOF())));
 
+        assertThat(runtimeException).hasMessage("No tokens parsed.");
     }
 }
