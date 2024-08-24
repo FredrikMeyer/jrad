@@ -28,15 +28,17 @@ public sealed interface LispExpression permits LispExpression.Procedure, LispLis
         }
 
         /**
-         * A UserProcedure is a procedure defined by the "user", for example by making a lambda function.
-         * It captures the environment it was created in, together with a list of arguments.
+         * A UserProcedure is a procedure defined by the "user", for example by making a lambda
+         * function. It captures the environment it was created in, together with a list of
+         * arguments.
          *
          * @param environment
          * @param arguments
          * @param body
          */
         record UserProcedure(Environment environment, List<String> arguments,
-            LispExpression body) implements Procedure {
+                             LispExpression body) implements Procedure {
+
         }
 
     }
@@ -48,7 +50,5 @@ public sealed interface LispExpression permits LispExpression.Procedure, LispLis
             return name;
         }
     }
-
-
 }
 

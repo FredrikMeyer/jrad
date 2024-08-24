@@ -12,10 +12,16 @@ Ever dreamed of writing Lisp with the robust elegance of Java? Neither did we, b
 mvn package
 ```
 
+Or, using the `Justfile`:
+
+```
+mvn pa
+```
+
 ## Running
 
 ```
-java -jar target/jrad-1.0-SNAPSHOT.jar
+just repl
 ```
 
 ## What the heck is ráð?
