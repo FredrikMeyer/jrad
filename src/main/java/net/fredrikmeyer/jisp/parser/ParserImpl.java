@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
 import net.fredrikmeyer.jisp.LispExpression;
+import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
 import net.fredrikmeyer.jisp.LispList;
 import net.fredrikmeyer.jisp.LispLiteral;
-import net.fredrikmeyer.jisp.LispSymbol;
 import net.fredrikmeyer.jisp.tokenizer.Token;
 import net.fredrikmeyer.jisp.tokenizer.Token.EOF;
 import net.fredrikmeyer.jisp.tokenizer.Token.NumberLiteral;
+import net.fredrikmeyer.jisp.tokenizer.Token.Quote;
 import net.fredrikmeyer.jisp.tokenizer.Token.StringLiteral;
 import net.fredrikmeyer.jisp.tokenizer.Token.Symbol;
 import org.jetbrains.annotations.NotNull;
@@ -85,8 +86,16 @@ public class ParserImpl implements Parser {
                         throw new RuntimeException("Should not get here.");
                     }
                 }
+                case Quote _ -> {
+                    stack.push(new LispList(new ArrayList<>()));
+                    if (!stack.isEmpty()) {
+                        stack.peek().append(new LispSymbol("quote"));
+                    } else {
+                        throw new RuntimeException("Should not get here.");
+                    }
+                }
                 case EOF _ -> {
-                    throw new IllegalArgumentException("shoudl not hete");
+                    throw new IllegalArgumentException("Should not get here.");
                 }
             }
         }

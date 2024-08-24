@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
 import net.fredrikmeyer.jisp.LispExpression.Procedure;
 import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.environment.Environment;
@@ -19,7 +20,7 @@ public class EvalApplyImpl implements IEvalApply {
         if (expression instanceof LispLiteral literal) {
             return literal;
         } else if (isVariable(expression)) {
-            LispExpression lispValue = environment.lookUpVariable(((LispSymbol) expression).value());
+            LispExpression lispValue = environment.lookUpVariable(((LispSymbol) expression).name());
             if (lispValue == null) {
                 return new LispSymbol("nil");
             }
@@ -27,7 +28,7 @@ public class EvalApplyImpl implements IEvalApply {
         } else if (isQuoted(expression)) {
             return ((LispList) expression).cadr();
         } else if (isAssignment(expression)) {
-            var name = ((LispSymbol) ((LispList) expression).cadr()).value();
+            var name = ((LispSymbol) ((LispList) expression).cadr()).name();
             var value = ((LispList) expression).caddr();
             environment.setVariable(name, eval(value, environment));
 
@@ -46,7 +47,7 @@ public class EvalApplyImpl implements IEvalApply {
             // Ugly, but this is Java :)
             var arguments = ((LispList) ((LispList) expression).cadr())
                 .elements().stream()
-                .map(el -> ((LispSymbol) el).value()).toList();
+                .map(el -> ((LispSymbol) el).name()).toList();
             var body = ((LispList) expression).cdr().cadr();
             return new UserProcedure(environment, arguments, body);
         } else if (isConditional(expression)) {
@@ -89,7 +90,7 @@ public class EvalApplyImpl implements IEvalApply {
                 return false;
             }
 
-            return symbol.value().equals("if");
+            return symbol.name().equals("if");
         }
         return false;
     }
@@ -105,7 +106,7 @@ public class EvalApplyImpl implements IEvalApply {
                 return false;
             }
 
-            return symbol.value().equals("begin");
+            return symbol.name().equals("begin");
         }
         return false;
     }
@@ -144,7 +145,7 @@ public class EvalApplyImpl implements IEvalApply {
                 return false;
             }
 
-            return symbol.value().equals("set!");
+            return symbol.name().equals("set!");
         }
         return false;
     }
@@ -155,7 +156,7 @@ public class EvalApplyImpl implements IEvalApply {
                 return false;
             }
 
-            if (!(symbol.value().equals("lambda"))) {
+            if (!(symbol.name().equals("lambda"))) {
                 return false;
             }
 
@@ -178,7 +179,7 @@ public class EvalApplyImpl implements IEvalApply {
                 return false;
             }
 
-            return s.value().equals(symbol);
+            return s.name().equals(symbol);
         }
         return false;
     }

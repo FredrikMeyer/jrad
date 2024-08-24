@@ -3,6 +3,7 @@ package net.fredrikmeyer.jisp.tokenizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import net.fredrikmeyer.jisp.tokenizer.Token.Quote;
 
 public class TokenizerImpl implements Tokenizer {
 
@@ -36,8 +37,11 @@ public class TokenizerImpl implements Tokenizer {
             } else if (Character.isDigit(current())) {
                 Token.NumberLiteral numberLiteral = slurpNumber();
                 tokens.add(numberLiteral);
+            } else if (current() == '\'') {
+                Quote quote = slurpQuote();
+                tokens.add(quote);
             } else {
-                throw new IllegalArgumentException("Unexpected character: " + current());
+                throw new IllegalArgumentException("Unexpected character: " + current() + ". Position: " + position + ".");
             }
         }
         tokens.add(new Token.EOF(position));
@@ -105,6 +109,12 @@ public class TokenizerImpl implements Tokenizer {
         retreat();
 
         return new Token.Symbol(value.toString(), initPosition);
+    }
+
+    private Token.Quote slurpQuote() {
+        int initPosition = position;
+        advance();
+        return new Token.Quote(initPosition);
     }
 
     private void slurpWhitespace() {

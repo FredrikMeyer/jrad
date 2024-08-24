@@ -53,7 +53,7 @@ class TokenizerImplTest {
         List<Token> result = new TokenizerImpl().tokenize("+");
 
         assertThat(result).isEqualTo(List.of(new Token.Symbol("+"),
-            new Token.EOF()));
+            new Token.EOF(1)));
     }
 
     @Test
@@ -61,7 +61,7 @@ class TokenizerImplTest {
         List<Token> result = new TokenizerImpl().tokenize("\"hello\"");
 
         assertThat(result).hasSize(2); // plus EOF
-        assertThat(result.getFirst()).isEqualTo(new Token.StringLiteral("hello"));
+        assertThat(result.getFirst()).isEqualTo(new Token.StringLiteral("hello", 1));
     }
 
     @Test
@@ -69,8 +69,8 @@ class TokenizerImplTest {
         List<Token> result = new TokenizerImpl().tokenize("\"hello\" \"my darling\"");
 
         assertThat(result).hasSize(3); // plus EOF
-        assertThat(result.getFirst()).isEqualTo(new Token.StringLiteral("hello"));
-        assertThat(result.get(1)).isEqualTo(new Token.StringLiteral("my darling"));
+        assertThat(result.getFirst()).isEqualTo(new Token.StringLiteral("hello", 1));
+        assertThat(result.get(1)).isEqualTo(new Token.StringLiteral("my darling", 9));
     }
 
     @Test
@@ -79,10 +79,12 @@ class TokenizerImplTest {
 
         assertThat(result).hasSize(4); // plus EOF
 
-        assertThat(result).isEqualTo(List.of(new Token.NumberLiteral(1),
-            new Token.NumberLiteral(2),
-            new Token.NumberLiteral(3),
-            new Token.EOF()));
+        assertThat(result).containsExactly(
+            new Token.NumberLiteral(1, 0),
+            new Token.NumberLiteral(2, 2),
+            new Token.NumberLiteral(3, 4),
+            new Token.EOF(5)
+        );
     }
 
     @Test
@@ -94,10 +96,10 @@ class TokenizerImplTest {
         assertThat(result).containsExactly(
             new Token.LeftParen(0),
             new Token.Symbol("+", 1),
-            new Token.NumberLiteral(1, 2),
-            new Token.NumberLiteral(2, 3),
+            new Token.NumberLiteral(1.0, 3),
+            new Token.NumberLiteral(2.0, 5),
             new Token.RightParen(6),
-            new Token.EOF());
+            new Token.EOF(7));
     }
 
     @Test
@@ -116,7 +118,7 @@ class TokenizerImplTest {
             new Token.NumberLiteral(4, 10),
             new Token.RightParen(11),
             new Token.RightParen(12),
-            new Token.EOF());
+            new Token.EOF(13));
     }
 
     @Test
@@ -129,9 +131,9 @@ class TokenizerImplTest {
             new Token.LeftParen(0),
             new Token.Symbol("append", 1),
             new Token.Symbol("my-list", 8),
-            new Token.StringLiteral("hello", 14),
+            new Token.StringLiteral("hello", 17),
             new Token.RightParen(23),
-            new Token.EOF());
+            new Token.EOF(24));
     }
 
     @Test
@@ -146,10 +148,10 @@ class TokenizerImplTest {
             new Token.LeftParen(8),
             new Token.Symbol("+", 9),
             new Token.LeftParen(11),
-            new Token.NumberLiteral(1, 14),
-            new Token.Symbol("-", 17),
-            new Token.StringLiteral("yo", 22),
-            new Token.StringLiteral("hello", 28),
+            new Token.NumberLiteral(1, 12),
+            new Token.Symbol("-", 14),
+            new Token.StringLiteral("yo", 17),
+            new Token.StringLiteral("hello", 22),
             new Token.RightParen(28),
             new Token.RightParen(29),
             new Token.EOF(30));
@@ -184,7 +186,7 @@ class TokenizerImplTest {
             new LeftParen(1),
             new RightParen(2),
             new RightParen(3),
-            new Token.EOF())
+            new Token.EOF(4))
         );
     }
 
@@ -195,9 +197,9 @@ class TokenizerImplTest {
         assertThat(result).isEqualTo(List.of(
             new Token.LeftParen(0),
             new Token.Symbol("set!", 1),
-            new Token.Symbol("a", 7),
-            new Token.NumberLiteral(2, 9),
-            new Token.EOF()
+            new Token.Symbol("a", 6),
+            new Token.NumberLiteral(2, 8),
+            new Token.EOF(9)
         ));
     }
 
@@ -212,7 +214,21 @@ class TokenizerImplTest {
             new Token.NumberLiteral(2, 5),
             new Token.NumberLiteral(3, 7),
             new Token.RightParen(8),
-            new Token.EOF()
+            new Token.EOF(9)
+        );
+    }
+
+    @Test
+    public void canParseQuote() {
+        List<Token> result = new TokenizerImpl().tokenize("'(1 2)");
+
+        assertThat(result).containsExactly(
+            new Token.Quote(0),
+            new Token.LeftParen(1),
+            new Token.NumberLiteral(1, 2),
+            new Token.NumberLiteral(2, 4),
+            new Token.RightParen(5),
+            new Token.EOF(6)
         );
     }
 }

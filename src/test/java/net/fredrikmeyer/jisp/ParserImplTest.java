@@ -1,5 +1,7 @@
 package net.fredrikmeyer.jisp;
 
+import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
+import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 import net.fredrikmeyer.jisp.parser.ParserImpl;
 import net.fredrikmeyer.jisp.tokenizer.Token;
 import net.fredrikmeyer.jisp.tokenizer.Token.EOF;
@@ -22,7 +24,7 @@ class ParserImplTest {
     @ValueSource(strings = {"hello", "på", "deg"})
     public void parsesStringConstants(String input) {
         LispExpression res = new ParserImpl().parse(
-            List.of(new Token.StringLiteral(input), new Token.EOF()));
+            List.of(new Token.StringLiteral(input), new Token.EOF(1)));
 
         assertThat(res).isInstanceOf(LispLiteral.class);
         assertThat(res).isInstanceOf(LispLiteral.StringLiteral.class);
@@ -97,5 +99,18 @@ class ParserImplTest {
             () -> new ParserImpl().parse(List.of(new EOF())));
 
         assertThat(runtimeException).hasMessage("No tokens parsed.");
+    }
+
+    @Test
+    void canParseQuote() {
+        List<Token> result = new TokenizerImpl().tokenize("'(1 2)");
+
+        LispExpression res = new ParserImpl().parse(result);
+
+        assertThat(res).isInstanceOf(LispList.class);
+        assertThat(res).isEqualTo(new LispList(
+            List.of(
+                new LispSymbol("quote"),
+                new LispList(new NumberLiteral(1.0), new NumberLiteral(2.0)))));
     }
 }
