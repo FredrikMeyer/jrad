@@ -51,6 +51,9 @@ public class EndToEndTests {
             Arguments.of("(- 5 3 1)", new NumberLiteral(1.0)),
             Arguments.of("(if (= 3 3) 1 2)", new NumberLiteral(1.0)),
             Arguments.of("(< 5 6 3 2)", new BoolValue(false)),
+            Arguments.of("(if #t 1 2)", new NumberLiteral(1.0)),
+            Arguments.of("(begin 1 '(1 2))", new LispList(new NumberLiteral(1.0), new NumberLiteral(2.0))),
+            Arguments.of("'(1 2)", new LispList(new NumberLiteral(1.0), new NumberLiteral(2.0))),
             Arguments.of("""
                 (begin (set! f (lambda (n)
                                 (if (= n 0)
@@ -59,7 +62,15 @@ public class EndToEndTests {
                                          1
                                          (+ (f (- n 1)) (f (- n 2)))))))
                        (f 10))
-                """, new NumberLiteral(89.0))
+                """, new NumberLiteral(89.0)),
+            Arguments.of("""
+                (begin
+                  (set! is-even (lambda (n)
+                                  (if (= n 0) #t (is-odd (- n 1)))))
+                  (set! is-odd (lambda (n)
+                                 (if (= n 0) #f (is-even (- n 1)))))
+                  (list (is-even 20) (is-odd 20)))
+                """, new LispList(new BoolValue(true), new BoolValue(false)))
         );
     }
 

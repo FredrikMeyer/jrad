@@ -44,12 +44,16 @@ public sealed interface Token {
         }
     }
 
+    record BooleanLiteral(boolean value, int position) implements Token {
+        public BooleanLiteral(boolean value) {
+            this(value, 0);
+        }
+    }
+
     record Quote(int position) implements Token {
     }
 
     record EOF(int position) implements Token {
-
-        private static final String value = "EOF";
 
         public EOF() {
             this(0);

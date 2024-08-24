@@ -124,4 +124,21 @@ class ParserImplTest {
                 new LispSymbol("quote"),
                 new LispList(new NumberLiteral(1.0), new NumberLiteral(2.0)))));
     }
+
+    @Test
+    void parseNestedQuote() {
+        List<Token> result = new TokenizerImpl().tokenize("(begin 1 (begin 2 '(1 2)))");
+
+        LispExpression res = new ParserImpl().parse(result);
+
+        assertThat(res).isInstanceOf(LispList.class);
+        assertThat(res).isEqualTo(new LispList(
+            List.of(
+                new LispSymbol("begin"),
+                new LispLiteral.NumberLiteral(1.0),
+                new LispList(new LispSymbol("begin"),
+                    new NumberLiteral(2.0),
+                    new LispList(new LispSymbol("quote"),
+                        new LispList(new NumberLiteral(1.0), new NumberLiteral(2.0)))))));
+    }
 }

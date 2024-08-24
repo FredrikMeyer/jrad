@@ -68,7 +68,7 @@ public class EvalApplyImpl implements IEvalApply {
             var procedure = eval(l.car(), environment);
 
             if (!(procedure instanceof Procedure p)) {
-                throw new RuntimeException("...");
+                throw new RuntimeException("Procedure expected, got: " + procedure + ". Expression: " + expression);
             }
 
             var arguments = l.cdr().elements()

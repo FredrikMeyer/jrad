@@ -3,7 +3,9 @@ package net.fredrikmeyer.jisp.tokenizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import net.fredrikmeyer.jisp.tokenizer.Token.BooleanLiteral;
 import net.fredrikmeyer.jisp.tokenizer.Token.Quote;
+import org.intellij.lang.annotations.Language;
 
 public class TokenizerImpl implements Tokenizer {
 
@@ -11,7 +13,7 @@ public class TokenizerImpl implements Tokenizer {
     private String input;
 
     @Override
-    public List<Token> tokenize(String input) {
+    public List<Token> tokenize(@Language("scheme") String input) {
         position = 0;
         Objects.requireNonNull(input);
 
@@ -40,6 +42,9 @@ public class TokenizerImpl implements Tokenizer {
             } else if (current() == '\'') {
                 Quote quote = slurpQuote();
                 tokens.add(quote);
+            } else if (current() == '#') {
+                BooleanLiteral booleanLiteral = slurpBoolean();
+                tokens.add(booleanLiteral);
             } else {
                 throw new IllegalArgumentException("Unexpected character: " + current() + ". Position: " + position + ".");
             }
@@ -69,11 +74,6 @@ public class TokenizerImpl implements Tokenizer {
     private char current() {
         assert position < input.length();
         return input.charAt(position);
-    }
-
-    private char peek() {
-        assert position < input.length();
-        return input.charAt(position++);
     }
 
     private Token.NumberLiteral slurpNumber() {
@@ -115,6 +115,22 @@ public class TokenizerImpl implements Tokenizer {
         int initPosition = position;
         advance();
         return new Token.Quote(initPosition);
+    }
+
+    private Token.BooleanLiteral slurpBoolean() {
+        int initPosition = position;
+        advance();
+        if (current() == 't') {
+            BooleanLiteral booleanLiteral = new BooleanLiteral(true, initPosition);
+            advance();
+            return booleanLiteral;
+        } else if (current() == 'f') {
+            BooleanLiteral booleanLiteral = new BooleanLiteral(false, initPosition);
+            advance();
+            return booleanLiteral;
+        } else {
+            throw new IllegalArgumentException("Unexpected character: " + current() + ". Position: " + position + ".");
+        }
     }
 
     private void slurpWhitespace() {

@@ -231,4 +231,15 @@ class TokenizerImplTest {
             new Token.EOF(6)
         );
     }
+
+    @Test
+    public void canParseBoolLiteral() {
+        List<Token> result = new TokenizerImpl().tokenize("#t #f");
+
+        assertThat(result).containsExactly(
+            new Token.BooleanLiteral(true, 0),
+            new Token.BooleanLiteral(false, 3),
+            new Token.EOF(5)
+        );
+    }
 }

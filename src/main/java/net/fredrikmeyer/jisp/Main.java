@@ -1,4 +1,5 @@
 package net.fredrikmeyer.jisp;
+
 import java.io.IOException;
 import net.fredrikmeyer.jisp.environment.Environment;
 import net.fredrikmeyer.jisp.environment.StandardEnvironment;
@@ -13,14 +14,12 @@ import org.jline.terminal.TerminalBuilder;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        //Signal.handle(new Signal("INT"),  // SIGINT
-//            _ -> System.exit(0));
-        //new REPLImpl().run();
-
         Terminal terminal = TerminalBuilder.terminal();
+
         LineReader reader = LineReaderBuilder.builder()
             .terminal(terminal)
             .completer(new StringsCompleter("describe", "create"))
+            .appName("jisp")
             .build();
 
         Environment env = new StandardEnvironment();
@@ -33,12 +32,16 @@ public class Main {
             }
             reader.getHistory().add(line);
 
-            LispExpression parsed = parse(line);
-
-            LispExpression result = evalApply.eval(parsed, env);
+            LispExpression result = evaluateLastLine(line, evalApply, env);
 
             System.out.println(">>: " + result);
         }
+    }
+
+    private static LispExpression evaluateLastLine(String line, IEvalApply evalApply,
+        Environment env) {
+        LispExpression parsed = parse(line);
+        return evalApply.eval(parsed, env);
     }
 
     private static LispExpression parse(String input) {

@@ -9,7 +9,9 @@ import net.fredrikmeyer.jisp.LispExpression;
 import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
 import net.fredrikmeyer.jisp.LispList;
 import net.fredrikmeyer.jisp.LispLiteral;
+import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.tokenizer.Token;
+import net.fredrikmeyer.jisp.tokenizer.Token.BooleanLiteral;
 import net.fredrikmeyer.jisp.tokenizer.Token.EOF;
 import net.fredrikmeyer.jisp.tokenizer.Token.LeftParen;
 import net.fredrikmeyer.jisp.tokenizer.Token.NumberLiteral;
@@ -94,6 +96,7 @@ public class ParserImpl implements Parser {
                 }
                 case Quote _ -> {
                     if (!stack.isEmpty()) {
+                        stack.push(new LispList(new ArrayList<>()));
                         stack.peek().append(new LispSymbol("quote"));
                     } else {
                         ArrayList<LispExpression> emptyList = new ArrayList<>();
@@ -101,8 +104,13 @@ public class ParserImpl implements Parser {
                         LispList quote = new LispList(emptyList);
                         stack.push(quote);
                         tokens.add(tokens.size() - 2, new RightParen());
-//                        tokens.add(new RightParen());
-//                        throw new RuntimeException("Should not get here. Current token: " + t);
+                    }
+                }
+                case BooleanLiteral booleanLiteral -> {
+                    if (!stack.isEmpty()) {
+                        stack.peek().append(new BoolValue(booleanLiteral.value()));
+                    } else {
+                        throw new RuntimeException("Should not get here.");
                     }
                 }
                 case EOF _ -> {
@@ -111,7 +119,9 @@ public class ParserImpl implements Parser {
             }
         }
 
-        assert stack.isEmpty();
+        if (!stack.isEmpty()) {
+            return stack.pop();
+        }
 
         return Objects.requireNonNull(res);
     }

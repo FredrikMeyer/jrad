@@ -3,9 +3,11 @@ package net.fredrikmeyer.jisp.environment;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.fredrikmeyer.jisp.LispExpression;
 import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
+import net.fredrikmeyer.jisp.LispList;
 import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 
@@ -69,8 +71,13 @@ public class StandardEnvironment implements Environment {
                 }
                 return new BoolValue(isDecreasing);
             }
+        });
 
-            ;
+        put("list", new BuiltInProcedure("list") {
+            @Override
+            public LispExpression apply(LispExpression... values) {
+                return new LispList(List.of(values));
+            }
         });
     }};
 
