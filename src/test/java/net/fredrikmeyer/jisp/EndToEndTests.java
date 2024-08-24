@@ -43,13 +43,14 @@ public class EndToEndTests {
             Arguments.of("(+ (* 2 3))", new NumberLiteral(6.0)),
             Arguments.of("(+ 2 (* 2 3))", new NumberLiteral(8.0)),
             Arguments.of("((lambda (x) (+ 1 x)) 1)", new NumberLiteral(2.)),
-            Arguments.of("(set! f (lambda (x) (+ x 1))", new LispSymbol("ok")),
+            Arguments.of("(set! f (lambda (x) (+ x 1)))", new LispSymbol("ok")),
             Arguments.of("(begin (set! f (lambda (x) (+ x 1))) (f 2))", new NumberLiteral(3.0)),
             Arguments.of("(< 5 4 3)", new BoolValue(true)),
             Arguments.of("(< 1 2 3)", new BoolValue(false)),
             Arguments.of("(- 5 2)", new NumberLiteral(3.0)),
             Arguments.of("(- 5 3 1)", new NumberLiteral(1.0)),
             Arguments.of("(if (= 3 3) 1 2)", new NumberLiteral(1.0)),
+            Arguments.of("(< 5 6 3 2)", new BoolValue(false)),
             Arguments.of("""
                 (begin (set! f (lambda (n)
                                 (if (= n 0)
@@ -57,7 +58,7 @@ public class EndToEndTests {
                                      (if (= n 1)
                                          1
                                          (+ (f (- n 1)) (f (- n 2)))))))
-                       (f 10)
+                       (f 10))
                 """, new NumberLiteral(89.0))
         );
     }

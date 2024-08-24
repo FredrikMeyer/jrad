@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-// Define a class for lists of expressions (e.g., function calls, nested lists)
 non-sealed public class LispList implements LispExpression {
 
     private final List<LispExpression> elements;

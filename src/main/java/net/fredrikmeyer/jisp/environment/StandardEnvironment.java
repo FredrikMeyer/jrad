@@ -4,8 +4,8 @@ package net.fredrikmeyer.jisp.environment;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import net.fredrikmeyer.jisp.BuiltInProcedure;
 import net.fredrikmeyer.jisp.LispExpression;
+import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
 import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 

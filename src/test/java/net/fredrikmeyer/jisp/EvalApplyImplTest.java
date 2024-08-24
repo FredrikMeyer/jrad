@@ -74,9 +74,9 @@ class EvalApplyImplTest {
             }
         };
 
-        var res = evalApply.eval(new LispList(
+        evalApply.eval(new LispList(
                 List.of(new LispSymbol("set!"), new LispSymbol("x"),
-                    new LispLiteral.NumberLiteral(120.4))),
+                    new NumberLiteral(120.4))),
             environment);
 
         assertThat(environment.lookUpVariable("x")).isEqualTo(new NumberLiteral(120.4));

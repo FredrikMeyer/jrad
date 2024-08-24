@@ -1,5 +1,10 @@
 package net.fredrikmeyer.jisp;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.List;
+import java.util.stream.Stream;
 import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 import net.fredrikmeyer.jisp.parser.ParserImpl;
@@ -11,12 +16,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ParserImplTest {
 
@@ -44,8 +43,12 @@ class ParserImplTest {
     @Test
     public void parseSimpleExpression() {
         LispExpression res = new ParserImpl().parse(
-            List.of(new Token.LeftParen(), new Token.Symbol("+"), new Token.NumberLiteral(2),
-                new Token.NumberLiteral(3), new Token.RightParen(), new Token.EOF()));
+            List.of(new Token.LeftParen(),
+                new Token.Symbol("+"),
+                new Token.NumberLiteral(2),
+                new Token.NumberLiteral(3),
+                new Token.RightParen(),
+                new Token.EOF()));
 
         assertThat(res).isInstanceOf(LispList.class);
         assertThat(res).isEqualTo(new LispList(
@@ -73,8 +76,6 @@ class ParserImplTest {
     public void parse(List<Token> input, LispExpression expected) {
         LispExpression res = new ParserImpl().parse(input);
 
-        System.out.println(input);
-        System.out.println("EXP " + expected);
         assertThat(res).isEqualTo(expected);
     }
 
@@ -99,6 +100,16 @@ class ParserImplTest {
             () -> new ParserImpl().parse(List.of(new EOF())));
 
         assertThat(runtimeException).hasMessage("No tokens parsed.");
+    }
+
+    @Test
+    public void unbalancedParensWithStrings() {
+        List<Token> result = new TokenizerImpl().tokenize("(\"hei\"))");
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+            () -> new ParserImpl().parse(result));
+
+        assertThat(runtimeException).hasMessageContaining("Mismatched parentheses.");
     }
 
     @Test

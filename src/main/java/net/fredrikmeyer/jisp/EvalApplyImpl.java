@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
 import net.fredrikmeyer.jisp.LispExpression.Procedure;
+import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
+import net.fredrikmeyer.jisp.LispExpression.Procedure.UserProcedure;
 import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.environment.Environment;
 import org.jetbrains.annotations.NotNull;
