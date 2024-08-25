@@ -12,6 +12,9 @@ import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.environment.Environment;
 import org.jetbrains.annotations.NotNull;
 
+// IDE: lag sealed klasse SyntacticForm (elns), hvor subklassene er ting som
+// variabel, self-evaluating, osv
+// da kan pattern matching + exhaustiveness brukes under
 public class EvalApplyImpl implements IEvalApply {
 
     @NotNull
@@ -19,10 +22,13 @@ public class EvalApplyImpl implements IEvalApply {
     public LispExpression eval(LispExpression expression, Environment environment) {
         Objects.requireNonNull(expression);
 
+        // is self-evaluating?
         if (expression instanceof LispLiteral literal) {
             return literal;
-        } else if (isVariable(expression)) {
-            LispExpression lispValue = environment.lookUpVariable(((LispSymbol) expression).name());
+
+        // is variable?
+        } else if (expression instanceof LispSymbol s) {
+            LispExpression lispValue = environment.lookUpVariable(s.name());
             if (lispValue == null) {
                 return new LispSymbol("nil");
             }
@@ -68,7 +74,8 @@ public class EvalApplyImpl implements IEvalApply {
             var procedure = eval(l.car(), environment);
 
             if (!(procedure instanceof Procedure p)) {
-                throw new RuntimeException("Procedure expected, got: " + procedure + ". Expression: " + expression);
+                throw new RuntimeException(
+                    "Procedure expected, got: " + procedure + ". Expression: " + expression);
             }
 
             var arguments = l.cdr().elements()
@@ -127,10 +134,6 @@ public class EvalApplyImpl implements IEvalApply {
                 yield eval(userProcedure.body(), newEnv);
             }
         };
-    }
-
-    private boolean isVariable(LispExpression expression) {
-        return expression instanceof LispSymbol;
     }
 
     private boolean isQuoted(LispExpression expression) {
