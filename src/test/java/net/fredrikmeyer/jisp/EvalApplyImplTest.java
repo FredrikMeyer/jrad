@@ -75,7 +75,7 @@ class EvalApplyImplTest {
         };
 
         evalApply.eval(new LispList(
-                List.of(new LispSymbol("set!"), new LispSymbol("x"),
+                List.of(new LispSymbol("define"), new LispSymbol("x"),
                     new NumberLiteral(120.4))),
             environment);
 

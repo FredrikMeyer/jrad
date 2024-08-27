@@ -14,6 +14,9 @@ public class TokenizerImpl implements Tokenizer {
 
     @Override
     public List<Token> tokenize(@Language("scheme") String input) {
+        // Super frustrating source of bug!
+        // Some tests worked sporadically because of reuse of objects with state.
+        // (I'm so used to coding "stateless")
         position = 0;
         Objects.requireNonNull(input);
 
@@ -46,7 +49,8 @@ public class TokenizerImpl implements Tokenizer {
                 BooleanLiteral booleanLiteral = slurpBoolean();
                 tokens.add(booleanLiteral);
             } else {
-                throw new IllegalArgumentException("Unexpected character: " + current() + ". Position: " + position + ".");
+                throw new IllegalArgumentException(
+                    "Unexpected character: " + current() + ". Position: " + position + ".");
             }
         }
         tokens.add(new Token.EOF(position));
@@ -55,12 +59,13 @@ public class TokenizerImpl implements Tokenizer {
 
     private static boolean isAllowedCharacterInSymbol(char currentChar) {
         return Character.isAlphabetic(currentChar)
-            || currentChar == '_'
-            || currentChar == '-'
-            || currentChar == '+'
-            || currentChar == '*'
-            || currentChar == '!'
-            || currentChar == '=' || currentChar == '<' || currentChar == '>';
+               || currentChar == '_'
+               || currentChar == '-'
+               || currentChar == '+'
+               || currentChar == '*'
+               || currentChar == '!'
+               || currentChar == '=' || currentChar == '<' || currentChar == '>' || currentChar == '/'
+               || currentChar == '?';
     }
 
     private void advance() {
@@ -79,9 +84,16 @@ public class TokenizerImpl implements Tokenizer {
     private Token.NumberLiteral slurpNumber() {
         StringBuilder value = new StringBuilder();
         int initPosition = position;
-        while ((position) < input.length() && Character.isDigit(current())) {
-            value.append(current());
-            advance();
+        boolean hasDecimalPoint = false;
+        while ((position) < input.length() && ((Character.isDigit(current())) || (current() == '.' && !hasDecimalPoint))) {
+            if (current() == '.') {
+                value.append('.');
+                hasDecimalPoint = true;
+                advance();
+            } else {
+                value.append(current());
+                advance();
+            }
         }
 
         return new Token.NumberLiteral(Double.parseDouble(value.toString()), initPosition);
@@ -117,7 +129,7 @@ public class TokenizerImpl implements Tokenizer {
         return new Token.Quote(initPosition);
     }
 
-    private Token.BooleanLiteral slurpBoolean() {
+    private BooleanLiteral slurpBoolean() {
         int initPosition = position;
         advance();
         if (current() == 't') {
@@ -129,7 +141,8 @@ public class TokenizerImpl implements Tokenizer {
             advance();
             return booleanLiteral;
         } else {
-            throw new IllegalArgumentException("Unexpected character: " + current() + ". Position: " + position + ".");
+            throw new IllegalArgumentException(
+                "Unexpected character: " + current() + ". Position: " + position + ".");
         }
     }
 

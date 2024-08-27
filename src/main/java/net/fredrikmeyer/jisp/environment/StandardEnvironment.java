@@ -5,9 +5,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import net.fredrikmeyer.jisp.LispExpression;
 import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
 import net.fredrikmeyer.jisp.LispList;
+import net.fredrikmeyer.jisp.LispLiteral;
 import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 
@@ -60,12 +63,12 @@ public class StandardEnvironment implements Environment {
         put("<", new BuiltInProcedure("<") {
             @Override
             public LispExpression apply(LispExpression... values) {
-                // true if values are strictly decreasing
+                // true if values are strictly increasing
                 boolean isDecreasing = true;
                 NumberLiteral prev = null;
                 for (LispExpression val : values) {
                     if (prev != null) {
-                        isDecreasing = isDecreasing && ((NumberLiteral) val).value() < prev.value();
+                        isDecreasing = isDecreasing && ((NumberLiteral) val).value() > prev.value();
                     }
                     prev = (NumberLiteral) val;
                 }
@@ -77,6 +80,32 @@ public class StandardEnvironment implements Environment {
             @Override
             public LispExpression apply(LispExpression... values) {
                 return new LispList(List.of(values));
+            }
+        });
+
+        put("abs", new BuiltInProcedure("abs") {
+
+            @Override
+            public LispExpression apply(LispExpression... values) {
+                assert values.length == 1;
+
+                if (Objects.requireNonNull(values[0]) instanceof LispLiteral lispLiteral) {
+                    if (lispLiteral instanceof NumberLiteral numberLiteral) {
+                        return new NumberLiteral(Math.abs(numberLiteral.value()));
+                    }
+                    throw new IllegalStateException("Unexpected value: " + lispLiteral);
+                }
+                throw new IllegalStateException("Unexpected value: " + values[0]);
+            }
+
+            ;
+        });
+
+        put("/", new BuiltInProcedure("/") {
+            @Override
+            public LispExpression apply(LispExpression... values) {
+                return new NumberLiteral(
+                    ((NumberLiteral) values[0]).value() / ((NumberLiteral) values[1]).value());
             }
         });
     }};
@@ -107,7 +136,7 @@ public class StandardEnvironment implements Environment {
     public Environment extendEnvironment(Map<String, LispExpression> bindings) {
         StandardEnvironment newEnvironment = new StandardEnvironment(this);
 
-        for (Map.Entry<String, LispExpression> binding : bindings.entrySet()) {
+        for (Entry<String, LispExpression> binding : bindings.entrySet()) {
             newEnvironment.setVariable(binding.getKey(), binding.getValue());
         }
 

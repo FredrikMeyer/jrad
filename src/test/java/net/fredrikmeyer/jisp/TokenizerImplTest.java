@@ -192,15 +192,16 @@ class TokenizerImplTest {
 
     @Test
     public void canTokenizeAssignment() {
-        List<Token> result = new TokenizerImpl().tokenize("(set! a 2");
+        List<Token> result = new TokenizerImpl().tokenize("(define a 2)");
 
-        assertThat(result).isEqualTo(List.of(
+        assertThat(result).containsExactly(
             new Token.LeftParen(0),
-            new Token.Symbol("set!", 1),
-            new Token.Symbol("a", 6),
-            new Token.NumberLiteral(2, 8),
-            new Token.EOF(9)
-        ));
+            new Token.Symbol("define", 1),
+            new Token.Symbol("a", 8),
+            new Token.NumberLiteral(2, 10),
+            new Token.RightParen(11),
+            new Token.EOF(12)
+        );
     }
 
     @Test
@@ -240,6 +241,16 @@ class TokenizerImplTest {
             new Token.BooleanLiteral(true, 0),
             new Token.BooleanLiteral(false, 3),
             new Token.EOF(5)
+        );
+    }
+
+    @Test
+    public void canParseDecimal() {
+        List<Token> result = new TokenizerImpl().tokenize("1.2");
+
+        assertThat(result).containsExactly(
+            new Token.NumberLiteral(1.2, 0),
+            new Token.EOF(3)
         );
     }
 }
