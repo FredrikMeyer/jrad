@@ -20,7 +20,6 @@ import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
 import net.fredrikmeyer.jisp.environment.Environment;
-import org.jetbrains.annotations.NotNull;
 
 public class EvalApplyImpl implements IEvalApply {
 
@@ -98,7 +97,6 @@ public class EvalApplyImpl implements IEvalApply {
         throw new RuntimeException("Should not get here: " + expression);
     }
 
-    @NotNull
     @Override
     public LispExpression eval(LispExpression expression, Environment environment) {
         Objects.requireNonNull(expression);
@@ -115,22 +113,22 @@ public class EvalApplyImpl implements IEvalApply {
                 }
                 yield lispValue;
             }
-            case Quotation quotation -> quotation.expression;
-            case Assignment assignment -> {
-                var name = assignment.symbol().name();
-                var value = assignment.expression;
+            case Quotation(LispExpression exp) -> exp;
 
-                environment.setVariable(name, eval(value, environment));
+            case Assignment(var symbol, var body) -> {
+                var name = symbol.name();
+
+                environment.setVariable(name, eval(body, environment));
 
                 yield new LispSymbol("ok");
             }
-            case Conditional conditional -> {
-                var condition = eval(conditional.condition, environment);
+            case Conditional(var condition, var then, var otherwise) -> {
+                var evaluatedCondition = eval(condition, environment);
 
-                if (isTrueIsh(condition)) {
-                    yield eval(conditional.then, environment);
+                if (isTrueIsh(evaluatedCondition)) {
+                    yield eval(then, environment);
                 } else {
-                    yield eval(conditional.otherwise, environment);
+                    yield eval(otherwise, environment);
                 }
             }
             case FunctionApplication(var procedure, var arguments) -> {
@@ -148,9 +146,8 @@ public class EvalApplyImpl implements IEvalApply {
 
                 yield apply(p, evaluatedArguments);
             }
-            case Lambda lambda -> {
-                List<String> args = lambda.arguments.stream().map(LispSymbol::name).toList();
-                var body = lambda.body;
+            case Lambda(var arguments, var body) -> {
+                List<String> args = arguments.stream().map(LispSymbol::name).toList();
 
                 yield new UserProcedure(environment, args, body);
             }
@@ -171,21 +168,21 @@ public class EvalApplyImpl implements IEvalApply {
         return switch (procedure) {
             case BuiltInProcedure builtInProcedure ->
                 builtInProcedure.apply(arguments.toArray(LispExpression[]::new));
-            case UserProcedure userProcedure -> {
+            case UserProcedure(Environment env, var args, var body) -> {
                 var newFrame = IntStream.range(0, arguments.size())
                     .boxed()
-                    .collect(Collectors.toMap(userProcedure.arguments()::get, arguments::get));
-                var newEnv = userProcedure.environment().extendEnvironment(newFrame);
+                    .collect(Collectors.toMap(args::get, arguments::get));
+                var newEnv = env.extendEnvironment(newFrame);
 
-                yield eval(userProcedure.body(), newEnv);
+                yield eval(body, newEnv);
             }
         };
     }
 
     private boolean isTrueIsh(LispExpression expression) {
         switch (expression) {
-            case LispSymbol lispSymbol -> {
-                return !lispSymbol.name().equals("nil");
+            case LispSymbol(var name) -> {
+                return !name.equals("nil");
             }
             case Procedure _ -> {
                 return true;
@@ -296,16 +293,5 @@ public class EvalApplyImpl implements IEvalApply {
                 lispList.caddr());
         }
         return null;
-    }
-
-    private boolean startsWithGivenSymbol(LispExpression expression, String symbol) {
-        if (expression instanceof LispList lispList) {
-            if (!(lispList.car() instanceof LispSymbol s)) {
-                return false;
-            }
-
-            return s.name().equals(symbol);
-        }
-        return false;
     }
 }

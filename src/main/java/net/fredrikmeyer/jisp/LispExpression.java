@@ -5,7 +5,10 @@ import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
 import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
 import net.fredrikmeyer.jisp.environment.Environment;
 
-public sealed interface LispExpression permits LispExpression.Procedure, LispList, LispLiteral,
+public sealed interface LispExpression permits
+    LispExpression.Procedure,
+    LispList,
+    LispLiteral,
     LispSymbol {
 
     sealed interface Procedure extends LispExpression permits BuiltInProcedure,

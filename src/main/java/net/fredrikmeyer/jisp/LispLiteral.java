@@ -4,6 +4,9 @@ import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
 
+/**
+ * LispLiterals are expressions that evaluate to themselves (numbers, booleans, strings, ...).
+ */
 public sealed interface LispLiteral extends LispExpression permits BoolValue, NumberLiteral,
     StringLiteral {
 
