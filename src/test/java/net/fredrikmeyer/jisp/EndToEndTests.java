@@ -1,6 +1,7 @@
 package net.fredrikmeyer.jisp;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -122,6 +123,18 @@ public class EndToEndTests {
         assertThat(((NumberLiteral) res).value())
             .isCloseTo(1.4142224,
                 Offset.offset(0.001));
+    }
+
+    @Test
+    void shouldGiveStackOverFlow() {
+        Tokenizer tokenizer = new TokenizerImpl();
+        Parser parser = new ParserImpl();
+        IEvalApply evalApply = new EvalApplyImpl();
+
+        LispExpression expression = parser.parse(
+            tokenizer.tokenize("((lambda (X) (X X)) (lambda (X) (X X)))"));
+
+        assertThrows(StackOverflowError.class, () -> evalApply.eval(expression, new StandardEnvironment()));
     }
 
     private @NotNull String readFromFile(String fileName) throws IOException {
