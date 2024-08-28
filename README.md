@@ -19,3 +19,12 @@ just package
 ```
 just repl
 ```
+
+Voila:
+
+```
+> (+ 1 2)
+>>: 3.0
+> ((lambda (x) (+ 1 x)) 2)
+>>: 3.0
+```
