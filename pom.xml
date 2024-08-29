@@ -87,6 +87,19 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>net.fredrikmeyer.jisp.Main</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
         <version>1.16.1</version>

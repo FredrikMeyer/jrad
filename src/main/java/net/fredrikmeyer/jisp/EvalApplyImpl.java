@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import net.fredrikmeyer.jisp.EvalApplyImpl.SyntacticForm.Assignment;
-import net.fredrikmeyer.jisp.EvalApplyImpl.SyntacticForm.Conditional;
-import net.fredrikmeyer.jisp.EvalApplyImpl.SyntacticForm.FunctionApplication;
-import net.fredrikmeyer.jisp.EvalApplyImpl.SyntacticForm.Lambda;
-import net.fredrikmeyer.jisp.EvalApplyImpl.SyntacticForm.Quotation;
-import net.fredrikmeyer.jisp.EvalApplyImpl.SyntacticForm.SelfEvaluating;
-import net.fredrikmeyer.jisp.EvalApplyImpl.SyntacticForm.Sequence;
-import net.fredrikmeyer.jisp.EvalApplyImpl.SyntacticForm.Variable;
+import net.fredrikmeyer.jisp.SyntacticForm.Assignment;
+import net.fredrikmeyer.jisp.SyntacticForm.Conditional;
+import net.fredrikmeyer.jisp.SyntacticForm.FunctionApplication;
+import net.fredrikmeyer.jisp.SyntacticForm.Lambda;
+import net.fredrikmeyer.jisp.SyntacticForm.Quotation;
+import net.fredrikmeyer.jisp.SyntacticForm.SelfEvaluating;
+import net.fredrikmeyer.jisp.SyntacticForm.Sequence;
+import net.fredrikmeyer.jisp.SyntacticForm.Variable;
 import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
 import net.fredrikmeyer.jisp.LispExpression.Procedure;
 import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
@@ -22,80 +22,6 @@ import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
 import net.fredrikmeyer.jisp.environment.Environment;
 
 public class EvalApplyImpl implements IEvalApply {
-
-    sealed interface SyntacticForm {
-
-        record SelfEvaluating(LispLiteral literal) implements SyntacticForm {
-
-        }
-
-        record Variable(LispSymbol s) implements SyntacticForm {
-
-        }
-
-        record Quotation(LispExpression expression) implements SyntacticForm {
-
-        }
-
-        record Assignment(LispSymbol symbol, LispExpression expression) implements SyntacticForm {
-
-        }
-
-        record Sequence(List<LispExpression> forms) implements SyntacticForm {
-
-        }
-
-        record Lambda(List<LispSymbol> arguments, LispExpression body) implements SyntacticForm {
-
-        }
-
-        record Conditional(LispExpression condition, LispExpression then,
-                           LispExpression otherwise) implements SyntacticForm {
-
-        }
-
-        record FunctionApplication(LispExpression procedure,
-                                   List<LispExpression> arguments) implements SyntacticForm {
-
-        }
-    }
-
-    private SyntacticForm parseExpression(LispExpression expression) {
-        if (expression instanceof LispLiteral literal) {
-            return new SelfEvaluating(literal);
-        }
-
-        if (expression instanceof LispSymbol s) {
-            return new SyntacticForm.Variable(s);
-        }
-
-        if (parseQuotation(expression) instanceof Quotation q) {
-            return q;
-        }
-
-        if (parseAssignment(expression) instanceof Assignment assignment) {
-            return assignment;
-        }
-
-        if (parseSequence(expression) instanceof Sequence sequence) {
-            return sequence;
-        }
-
-        if (parseLambda(expression) instanceof Lambda lambda) {
-            return lambda;
-        }
-
-        if (parseConditional(expression) instanceof Conditional conditional) {
-            return conditional;
-        }
-
-        if (parseFunctionApplication(
-            expression) instanceof FunctionApplication functionApplication) {
-            return functionApplication;
-        }
-
-        throw new RuntimeException("Should not get here: " + expression);
-    }
 
     @Override
     public LispExpression eval(LispExpression expression, Environment environment) {
@@ -177,6 +103,44 @@ public class EvalApplyImpl implements IEvalApply {
                 yield eval(body, newEnv);
             }
         };
+    }
+
+
+    private SyntacticForm parseExpression(LispExpression expression) {
+        if (expression instanceof LispLiteral literal) {
+            return new SelfEvaluating(literal);
+        }
+
+        if (expression instanceof LispSymbol s) {
+            return new SyntacticForm.Variable(s);
+        }
+
+        if (parseQuotation(expression) instanceof Quotation q) {
+            return q;
+        }
+
+        if (parseAssignment(expression) instanceof Assignment assignment) {
+            return assignment;
+        }
+
+        if (parseSequence(expression) instanceof Sequence sequence) {
+            return sequence;
+        }
+
+        if (parseLambda(expression) instanceof Lambda lambda) {
+            return lambda;
+        }
+
+        if (parseConditional(expression) instanceof Conditional conditional) {
+            return conditional;
+        }
+
+        if (parseFunctionApplication(
+            expression) instanceof FunctionApplication functionApplication) {
+            return functionApplication;
+        }
+
+        throw new RuntimeException("Should not get here: " + expression);
     }
 
     private boolean isTrueIsh(LispExpression expression) {
