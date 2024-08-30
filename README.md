@@ -52,7 +52,7 @@ Assignment:
 
 ```lisp
 (define f (lambda (n) (+ n 1)))
-;; Following is not implemented (not commens either):
+;; Following is not implemented (not comments either):
 (define (adder n) (lambda (n) (+ n 1)))
 ```
 
@@ -92,3 +92,8 @@ Want to have:
 ## References
 
 https://courses.cs.washington.edu/courses/cse341/04wi/lectures/12-scheme.html
+
+Recursive Functions of Symbolic Expressions
+Their Computation by Machine, Part I
+https://dl.acm.org/doi/pdf/10.1145/367177.367199
+https://www-formal.stanford.edu/jmc/recursive.pdf
