@@ -97,3 +97,6 @@ Recursive Functions of Symbolic Expressions
 Their Computation by Machine, Part I
 https://dl.acm.org/doi/pdf/10.1145/367177.367199
 https://www-formal.stanford.edu/jmc/recursive.pdf
+
+
+Lots of tests to run later: https://github.com/ashinn/chibi-scheme/blob/master/tests/r5rs-tests.scm

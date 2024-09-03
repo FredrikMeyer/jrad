@@ -25,7 +25,7 @@ public class EvalApplyImpl implements IEvalApply {
 
     @Override
     public LispExpression eval(LispExpression expression, Environment environment) {
-        Objects.requireNonNull(expression);
+        Objects.requireNonNull(expression); // (+ 1 2)
 
         var parsed = parseExpression(expression);
 
@@ -48,6 +48,8 @@ public class EvalApplyImpl implements IEvalApply {
 
                 yield new LispSymbol("ok");
             }
+
+            // (if #t 1 2)
             case Conditional(var condition, var then, var otherwise) -> {
                 var evaluatedCondition = eval(condition, environment);
 
@@ -57,6 +59,8 @@ public class EvalApplyImpl implements IEvalApply {
                     yield eval(otherwise, environment);
                 }
             }
+
+            // (f 1 2)
             case FunctionApplication(var procedure, var arguments) -> {
                 var evaluatedProcedure = eval(procedure, environment);
 
@@ -72,6 +76,7 @@ public class EvalApplyImpl implements IEvalApply {
 
                 yield apply(p, evaluatedArguments);
             }
+            // (lambda (x) (+ x 1))
             case Lambda(var arguments, var body) -> {
                 List<String> args = arguments.stream().map(LispSymbol::name).toList();
 
@@ -112,9 +117,10 @@ public class EvalApplyImpl implements IEvalApply {
         }
 
         if (expression instanceof LispSymbol s) {
-            return new SyntacticForm.Variable(s);
+            return new Variable(s);
         }
 
+        // Starts with ' or (quote
         if (parseQuotation(expression) instanceof Quotation q) {
             return q;
         }
