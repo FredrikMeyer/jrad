@@ -100,3 +100,7 @@ https://www-formal.stanford.edu/jmc/recursive.pdf
 
 
 Lots of tests to run later: https://github.com/ashinn/chibi-scheme/blob/master/tests/r5rs-tests.scm
+
+**Eliza Chatbot**
+http://lisp.plasticki.com/show?24GC
+https://github.com/norvig/paip-lisp/blob/main/lisp/eliza.lisp
