@@ -104,3 +104,8 @@ Lots of tests to run later: https://github.com/ashinn/chibi-scheme/blob/master/t
 **Eliza Chatbot**
 http://lisp.plasticki.com/show?24GC
 https://github.com/norvig/paip-lisp/blob/main/lisp/eliza.lisp
+
+
+**Lisp in 1k lines of C**
+
+https://github.com/Robert-van-Engelen/lispg

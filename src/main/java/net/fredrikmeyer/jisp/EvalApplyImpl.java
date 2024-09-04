@@ -112,10 +112,12 @@ public class EvalApplyImpl implements IEvalApply {
 
 
     private SyntacticForm parseExpression(LispExpression expression) {
+        // Is literal, return SyntacticForm of type SelfEvaluating
         if (expression instanceof LispLiteral literal) {
             return new SelfEvaluating(literal);
         }
 
+        // Is variable
         if (expression instanceof LispSymbol s) {
             return new Variable(s);
         }
@@ -125,22 +127,27 @@ public class EvalApplyImpl implements IEvalApply {
             return q;
         }
 
+        // Example: (define a (+ 1 2))
         if (parseAssignment(expression) instanceof Assignment assignment) {
             return assignment;
         }
 
+        // Example: (begin (define b 2) (+ b 3))
         if (parseSequence(expression) instanceof Sequence sequence) {
             return sequence;
         }
 
+        // Example: (lambda (a b) (+ a b))
         if (parseLambda(expression) instanceof Lambda lambda) {
             return lambda;
         }
 
+        // Example: (if <test> <then> <otherwise>)
         if (parseConditional(expression) instanceof Conditional conditional) {
             return conditional;
         }
 
+        // Anything else is a function application: (f arg1 arg2)
         if (parseFunctionApplication(
             expression) instanceof FunctionApplication functionApplication) {
             return functionApplication;
