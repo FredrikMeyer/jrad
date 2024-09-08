@@ -21,9 +21,12 @@ sealed interface SyntacticForm {
     }
 
     /// (define a 2)
-    public record Assignment(LispSymbol symbol, LispExpression expression) implements SyntacticForm {
+    record Assignment(LispSymbol symbol, LispExpression expression) implements SyntacticForm {
 
     }
+
+    /// Like define, but only for already defined symbols.
+    record Set(LispSymbol symbol, LispExpression expression) implements SyntacticForm {}
 
     /// (begin
     ///   (define a 2)

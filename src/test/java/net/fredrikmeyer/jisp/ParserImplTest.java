@@ -141,4 +141,15 @@ class ParserImplTest {
                     new LispList(new LispSymbol("quote"),
                         new LispList(new NumberLiteral(1.0), new NumberLiteral(2.0)))))));
     }
+
+    @Test
+    void canHaveVariablesEndingInNumbers() {
+        List<Token> result = new TokenizerImpl().tokenize("define1");
+
+        LispExpression res = new ParserImpl().parse(result);
+
+        assertThat(res).isInstanceOf(LispSymbol.class);
+        assertThat(res).isEqualTo(
+            new LispSymbol("define1"));
+    }
 }

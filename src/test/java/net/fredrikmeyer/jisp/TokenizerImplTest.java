@@ -75,15 +75,14 @@ class TokenizerImplTest {
 
     @Test
     public void canParseInteger() {
-        List<Token> result = new TokenizerImpl().tokenize("1 2 3");
-
-        assertThat(result).hasSize(4); // plus EOF
+        List<Token> result = new TokenizerImpl().tokenize("1 2 3 -4");
 
         assertThat(result).containsExactly(
             new Token.NumberLiteral(1, 0),
             new Token.NumberLiteral(2, 2),
             new Token.NumberLiteral(3, 4),
-            new Token.EOF(5)
+            new Token.NumberLiteral(-4, 6),
+            new Token.EOF(8)
         );
     }
 
@@ -251,6 +250,16 @@ class TokenizerImplTest {
         assertThat(result).containsExactly(
             new Token.NumberLiteral(1.2, 0),
             new Token.EOF(3)
+        );
+    }
+
+    @Test
+    void canParseVariableEndingInNumber() {
+        List<Token> result = new TokenizerImpl().tokenize("define1");
+
+        assertThat(result).containsExactly(
+            new Token.Symbol("define1", 0),
+            new Token.EOF(7)
         );
     }
 }

@@ -31,7 +31,7 @@ public class TokenizerImpl implements Tokenizer {
             } else if (current() == ')') {
                 tokens.add(new Token.RightParen(position));
                 advance();
-            } else if (isAllowedCharacterInSymbol(current())) {
+            } else if (isAllowedInitialCharacterInSymbol(current())) {
                 Token.Symbol symbol = slurpSymbol();
                 tokens.add(symbol);
                 advance();
@@ -39,7 +39,7 @@ public class TokenizerImpl implements Tokenizer {
                 Token.StringLiteral stringLiteral = slurpString();
                 tokens.add(stringLiteral);
                 advance();
-            } else if (Character.isDigit(current())) {
+            } else if (isAllowedFirstInDigit()) {
                 Token.NumberLiteral numberLiteral = slurpNumber();
                 tokens.add(numberLiteral);
             } else if (current() == '\'') {
@@ -57,15 +57,33 @@ public class TokenizerImpl implements Tokenizer {
         return tokens;
     }
 
-    private static boolean isAllowedCharacterInSymbol(char currentChar) {
+    private boolean isAllowedFirstInDigit() {
+        return Character.isDigit(current()) || current() == '-';
+    }
+
+    private boolean isAllowedInitialCharacterInSymbol(char currentChar) {
+        var allowedCharacters = "!$%&*/:<=>?~_^";
+
+        if (current() == '+' || current() == '-') {
+            if (position < input.length() - 1) {
+                return Character.isWhitespace(peek());
+            } else {
+                return true;
+            }
+        }
+
         return Character.isAlphabetic(currentChar)
-               || currentChar == '_'
-               || currentChar == '-'
-               || currentChar == '+'
-               || currentChar == '*'
-               || currentChar == '!'
-               || currentChar == '=' || currentChar == '<' || currentChar == '>' || currentChar == '/'
-               || currentChar == '?';
+               || allowedCharacters.indexOf(currentChar) >= 0;
+    }
+
+    private boolean isAllowedCharacterSubsequent(char currentChar) {
+        var additionChars = ".@+-";
+        return isAllowedInitialCharacterInSymbol(currentChar) || Character.isDigit(currentChar)
+               || additionChars.indexOf(currentChar) >= 0;
+    }
+
+    private char peek() {
+        return input.charAt(position + 1);
     }
 
     private void advance() {
@@ -83,9 +101,17 @@ public class TokenizerImpl implements Tokenizer {
 
     private Token.NumberLiteral slurpNumber() {
         StringBuilder value = new StringBuilder();
+
         int initPosition = position;
         boolean hasDecimalPoint = false;
-        while ((position) < input.length() && ((Character.isDigit(current())) || (current() == '.' && !hasDecimalPoint))) {
+
+        if (current() == '-') {
+            value.append('-');
+            advance();
+        }
+
+        while ((position) < input.length() && ((Character.isDigit(current())) || (current() == '.'
+                                                                                  && !hasDecimalPoint))) {
             if (current() == '.') {
                 value.append('.');
                 hasDecimalPoint = true;
@@ -114,10 +140,11 @@ public class TokenizerImpl implements Tokenizer {
     private Token.Symbol slurpSymbol() {
         StringBuilder value = new StringBuilder();
         int initPosition = position;
-        while (position < input.length() && isAllowedCharacterInSymbol(current())) {
+
+        do {
             value.append(current());
             advance();
-        }
+        } while (position < input.length() && isAllowedCharacterSubsequent(current()));
         retreat();
 
         return new Token.Symbol(value.toString(), initPosition);

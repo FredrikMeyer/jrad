@@ -56,12 +56,15 @@ public class EndToEndTests {
             Arguments.of("(< 1 2 3)", new BoolValue(true)),
             Arguments.of("(- 5 2)", new NumberLiteral(3.0)),
             Arguments.of("(- 5 3 1)", new NumberLiteral(1.0)),
+            Arguments.of("(* -5 -5)", new NumberLiteral(25.0)),
             Arguments.of("(if (= 3 3) 1 2)", new NumberLiteral(1.0)),
             Arguments.of("(if (= 3 4) 1 2)", new NumberLiteral(2.0)),
             Arguments.of("(< 5 6 3 2)", new BoolValue(false)),
             Arguments.of("(< 9999 2)", new BoolValue(false)),
             Arguments.of("(/ 5 2)", new NumberLiteral(2.5)),
             Arguments.of("(if #t 1 2)", new NumberLiteral(1.0)),
+            Arguments.of("(begin (define a 2) (set! a 3) a)", new NumberLiteral(3.0)),
+            Arguments.of("(begin (define a 2) (set! a (+ a 1)) a)", new NumberLiteral(3.0)),
             Arguments.of("""
                 (begin (define a 2)
                        ((lambda (a) a) 3))""", new NumberLiteral(3.0)),
@@ -103,8 +106,8 @@ public class EndToEndTests {
     }
 
     @Test
-    void expressionsFromResources() throws IOException {
-        String s = readFromFile("test.scm");
+    void squareRootTest() throws IOException {
+        String s = readFromFile("sqrt.scm");
 
         System.out.println(s);
 
@@ -122,6 +125,28 @@ public class EndToEndTests {
 
         assertThat(((NumberLiteral) res).value())
             .isCloseTo(1.4142224,
+                Offset.offset(0.001));
+    }
+
+    @Test
+    void makeAccount() throws IOException {
+        String s = readFromFile("make-account.scm");
+
+        Tokenizer tokenizer = new TokenizerImpl();
+        Parser parser = new ParserImpl();
+        IEvalApply evalApply = new EvalApplyImpl();
+
+        System.out.println(s);
+        List<Token> tokens = tokenizer.tokenize(s);
+
+        LispExpression parsed = parser.parse(tokens);
+
+        Environment environment = new StandardEnvironment();
+
+        LispExpression res = evalApply.eval(parsed, environment);
+
+        assertThat(((NumberLiteral) res).value())
+            .isCloseTo(80,
                 Offset.offset(0.001));
     }
 
@@ -156,7 +181,6 @@ public class EndToEndTests {
         }
         b.append(")");
 
-        String s = b.toString();
-        return s;
+        return b.toString();
     }
 }

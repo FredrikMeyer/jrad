@@ -80,7 +80,6 @@ Conditional:
 Want to have:
 
  - `cond`
- - `set!`
  - `let`
  - `letrec`
  - `map`, `filter`, etc
@@ -106,6 +105,27 @@ http://lisp.plasticki.com/show?24GC
 https://github.com/norvig/paip-lisp/blob/main/lisp/eliza.lisp
 
 
+
+### Other implementations
+
 **Lisp in 1k lines of C**
 
 https://github.com/Robert-van-Engelen/lispg
+
+Peter Norvig's
+https://norvig.com/lispy.html
+
+Scheme tutorial
+https://www.cs.rpi.edu/academics/courses/fall00/ai/scheme/reference/Scheme.html
+
+Lots of pictures of old Lisp machines
+https://www.ifis.uni-luebeck.de/~moeller/symbolics-info/index.html
+
+
+### Fun
+
+Poems and jokes about Lisp
+https://web.archive.org/web/20170320142011/http://www.gotlisp.com/lambda/lambda.txt
+
+List of Lisp humor
+https://www.cliki.net/humor

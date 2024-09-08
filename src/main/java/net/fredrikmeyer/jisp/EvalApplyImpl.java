@@ -11,6 +11,7 @@ import net.fredrikmeyer.jisp.SyntacticForm.Lambda;
 import net.fredrikmeyer.jisp.SyntacticForm.Quotation;
 import net.fredrikmeyer.jisp.SyntacticForm.SelfEvaluating;
 import net.fredrikmeyer.jisp.SyntacticForm.Sequence;
+import net.fredrikmeyer.jisp.SyntacticForm.Set;
 import net.fredrikmeyer.jisp.SyntacticForm.Variable;
 import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
 import net.fredrikmeyer.jisp.LispExpression.Procedure;
@@ -47,6 +48,16 @@ public class EvalApplyImpl implements IEvalApply {
                 environment.setVariable(name, eval(body, environment));
 
                 yield new LispSymbol("ok");
+            }
+
+            case Set(LispSymbol(var name), var value) -> {
+                if (environment.lookUpVariable(name) == null) {
+                    throw new RuntimeException("Cannot set! non-existing symbol.");
+                } else {
+                    environment.setVariable(name, eval(value, environment));
+
+                    yield new LispSymbol("ok");
+                }
             }
 
             // (if #t 1 2)
@@ -130,6 +141,10 @@ public class EvalApplyImpl implements IEvalApply {
         // Example: (define a (+ 1 2))
         if (parseAssignment(expression) instanceof Assignment assignment) {
             return assignment;
+        }
+
+        if (parseSet(expression) instanceof Set set) {
+            return set;
         }
 
         // Example: (begin (define b 2) (+ b 3))
@@ -244,6 +259,29 @@ public class EvalApplyImpl implements IEvalApply {
             var rest = lispList.caddr();
 
             return new Assignment(var, rest);
+        }
+        return null;
+    }
+
+    private Set parseSet(LispExpression expression) {
+        if (expression instanceof LispList lispList) {
+            if (lispList.length() != 3) {
+                return null;
+            }
+
+            if (!(lispList.car() instanceof LispSymbol symbol)) {
+                return null;
+            }
+
+            if (!symbol.name().equals("set!")) {
+                return null;
+            }
+
+            if (!(lispList.cadr() instanceof LispSymbol variable)) {
+                return null;
+            }
+
+            return new Set(variable, lispList.caddr());
         }
         return null;
     }
