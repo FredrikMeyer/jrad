@@ -115,12 +115,7 @@ https://github.com/Robert-van-Engelen/lispg
 Peter Norvig's
 https://norvig.com/lispy.html
 
-Scheme tutorial
-https://www.cs.rpi.edu/academics/courses/fall00/ai/scheme/reference/Scheme.html
-
-Lots of pictures of old Lisp machines
-https://www.ifis.uni-luebeck.de/~moeller/symbolics-info/index.html
-
+[GRScheme](https://andreyor.st/posts/2020-02-25-grscheme-design-part-1/)
 
 ### Fun
 
@@ -129,3 +124,18 @@ https://web.archive.org/web/20170320142011/http://www.gotlisp.com/lambda/lambda.
 
 List of Lisp humor
 https://www.cliki.net/humor
+
+### Other
+
+[How Lisp Became God's Own Programming Language](https://twobithistory.org/2018/10/14/lisp.html)
+
+[What is the origin and meaning of the phrase “Lambda the ultimate?”](https://softwareengineering.stackexchange.com/questions/107687/what-is-the-origin-and-meaning-of-the-phrase-lambda-the-ultimate)
+
+Lots of pictures of old Lisp machines
+https://www.ifis.uni-luebeck.de/~moeller/symbolics-info/index.html
+
+Scheme tutorial
+https://www.cs.rpi.edu/academics/courses/fall00/ai/scheme/reference/Scheme.html
+
+[Scheme grammar](https://www.scheme.com/tspl3/grammar.html)
+From this book: https://www.scheme.com/tspl3/
