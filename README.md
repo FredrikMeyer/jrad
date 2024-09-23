@@ -139,3 +139,5 @@ https://www.cs.rpi.edu/academics/courses/fall00/ai/scheme/reference/Scheme.html
 
 [Scheme grammar](https://www.scheme.com/tspl3/grammar.html)
 From this book: https://www.scheme.com/tspl3/
+
+[Scheme books](https://books.scheme.org/)
