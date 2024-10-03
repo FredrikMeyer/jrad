@@ -2,6 +2,8 @@
 
 # ráð (Java + gammel-norsk for "advice/råd")
 
+A simple Lisp written in Java.
+
 ## Building
 
 ```
