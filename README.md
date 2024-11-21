@@ -143,3 +143,6 @@ https://www.cs.rpi.edu/academics/courses/fall00/ai/scheme/reference/Scheme.html
 From this book: https://www.scheme.com/tspl3/
 
 [Scheme books](https://books.scheme.org/)
+
+Annotated Lisp bibliography
+https://simondobson.org/development/annotated-lisp-bibliography/
