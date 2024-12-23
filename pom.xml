@@ -36,7 +36,7 @@
     <dependency>
       <groupId>org.pitest</groupId>
       <artifactId>pitest-maven</artifactId>
-      <version>1.17.2</version>
+      <version>1.17.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -102,7 +102,7 @@
       <plugin>
         <groupId>org.pitest</groupId>
         <artifactId>pitest-maven</artifactId>
-        <version>1.17.2</version>
+        <version>1.17.3</version>
         <dependencies>
           <dependency>
             <groupId>org.pitest</groupId>
