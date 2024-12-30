@@ -10,6 +10,7 @@ import net.fredrikmeyer.jisp.LispExpression.Procedure;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
 import net.fredrikmeyer.jisp.environment.Environment;
+import net.fredrikmeyer.jisp.evaluator.StandardEvalApply;
 import org.junit.jupiter.api.Test;
 
 class StandardEvalApplyTest {

@@ -1,7 +1,7 @@
 package net.fredrikmeyer.jisp.repl;
 
-import net.fredrikmeyer.jisp.StandardEvalApply;
-import net.fredrikmeyer.jisp.EvalApply;
+import net.fredrikmeyer.jisp.evaluator.StandardEvalApply;
+import net.fredrikmeyer.jisp.evaluator.EvalApply;
 import net.fredrikmeyer.jisp.LispExpression;
 import net.fredrikmeyer.jisp.environment.Environment;
 import net.fredrikmeyer.jisp.environment.StandardEnvironment;

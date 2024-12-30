@@ -1,6 +1,7 @@
-package net.fredrikmeyer.jisp;
+package net.fredrikmeyer.jisp.evaluator;
 
 import java.util.List;
+import net.fredrikmeyer.jisp.LispExpression;
 import net.fredrikmeyer.jisp.LispExpression.Procedure;
 import net.fredrikmeyer.jisp.environment.Environment;
 

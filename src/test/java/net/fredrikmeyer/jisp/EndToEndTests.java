@@ -14,6 +14,8 @@ import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 import net.fredrikmeyer.jisp.environment.Environment;
 import net.fredrikmeyer.jisp.environment.StandardEnvironment;
+import net.fredrikmeyer.jisp.evaluator.EvalApply;
+import net.fredrikmeyer.jisp.evaluator.StandardEvalApply;
 import net.fredrikmeyer.jisp.parser.Parser;
 import net.fredrikmeyer.jisp.parser.ParserImpl;
 import net.fredrikmeyer.jisp.tokenizer.Token;
