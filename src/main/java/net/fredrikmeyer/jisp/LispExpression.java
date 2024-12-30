@@ -2,14 +2,14 @@ package net.fredrikmeyer.jisp;
 
 import java.util.List;
 import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
+import net.fredrikmeyer.jisp.LispExpression.Nil;
+import net.fredrikmeyer.jisp.LispExpression.Ok;
+import net.fredrikmeyer.jisp.LispExpression.Procedure;
 import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
 import net.fredrikmeyer.jisp.environment.Environment;
 
-public sealed interface LispExpression permits
-    LispExpression.Procedure,
-    LispList,
-    LispLiteral,
-    LispSymbol {
+public sealed interface LispExpression permits LispSymbol, Nil, Ok, Procedure, LispList,
+    LispLiteral {
 
     sealed interface Procedure extends LispExpression permits BuiltInProcedure,
         Procedure.UserProcedure {
@@ -59,6 +59,16 @@ public sealed interface LispExpression permits
         public String toString() {
             return name;
         }
+    }
+
+    record Nil() implements LispExpression {
+        @Override
+        public String toString() {
+            return "nul";
+        }
+    }
+
+    record Ok() implements LispExpression {
     }
 }
 

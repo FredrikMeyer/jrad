@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.stream.Stream;
 import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
+import net.fredrikmeyer.jisp.LispExpression.Ok;
 import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
 import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 import net.fredrikmeyer.jisp.environment.Environment;
@@ -52,7 +53,7 @@ public class EndToEndTests {
             Arguments.of("(+ (* 2 3))", new NumberLiteral(6.0)),
             Arguments.of("(+ 2 (* 2 3))", new NumberLiteral(8.0)),
             Arguments.of("((lambda (x) (+ 1 x)) 1)", new NumberLiteral(2.)),
-            Arguments.of("(define f (lambda (x) (+ x 1)))", new LispSymbol("ok")),
+            Arguments.of("(define f (lambda (x) (+ x 1)))", new Ok()),
             Arguments.of("(begin (define f (lambda (x) (+ x 1))) (f 2))", new NumberLiteral(3.0)),
             Arguments.of("(< 5 4 3)", new BoolValue(false)),
             Arguments.of("(< 1 2 3)", new BoolValue(true)),

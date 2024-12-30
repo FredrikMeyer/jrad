@@ -5,8 +5,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import net.fredrikmeyer.jisp.LispExpression;
+import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
+import net.fredrikmeyer.jisp.LispExpression.Nil;
+import net.fredrikmeyer.jisp.LispExpression.Ok;
+import net.fredrikmeyer.jisp.LispExpression.Procedure;
+import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
+import net.fredrikmeyer.jisp.LispExpression.Procedure.UserProcedure;
 import net.fredrikmeyer.jisp.LispList;
 import net.fredrikmeyer.jisp.LispLiteral;
+import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
+import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
+import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
+import net.fredrikmeyer.jisp.environment.Environment;
 import net.fredrikmeyer.jisp.evaluator.SyntacticForm.Assignment;
 import net.fredrikmeyer.jisp.evaluator.SyntacticForm.Conditional;
 import net.fredrikmeyer.jisp.evaluator.SyntacticForm.FunctionApplication;
@@ -16,14 +26,6 @@ import net.fredrikmeyer.jisp.evaluator.SyntacticForm.SelfEvaluating;
 import net.fredrikmeyer.jisp.evaluator.SyntacticForm.Sequence;
 import net.fredrikmeyer.jisp.evaluator.SyntacticForm.Set;
 import net.fredrikmeyer.jisp.evaluator.SyntacticForm.Variable;
-import net.fredrikmeyer.jisp.LispExpression.LispSymbol;
-import net.fredrikmeyer.jisp.LispExpression.Procedure;
-import net.fredrikmeyer.jisp.LispExpression.Procedure.BuiltInProcedure;
-import net.fredrikmeyer.jisp.LispExpression.Procedure.UserProcedure;
-import net.fredrikmeyer.jisp.LispLiteral.BoolValue;
-import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
-import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
-import net.fredrikmeyer.jisp.environment.Environment;
 
 public class StandardEvalApply implements EvalApply {
 
@@ -39,7 +41,7 @@ public class StandardEvalApply implements EvalApply {
             case Variable(LispSymbol(var name)) -> {
                 LispExpression lispValue = environment.lookUpVariable(name);
                 if (lispValue == null) {
-                    yield new LispSymbol("nil");
+                    yield new Nil();
                 }
                 yield lispValue;
             }
@@ -50,7 +52,7 @@ public class StandardEvalApply implements EvalApply {
 
                 environment.setVariable(name, eval(body, environment));
 
-                yield new LispSymbol("ok");
+                yield new Ok();
             }
 
             case Set(LispSymbol(var name), var value) -> {
@@ -59,7 +61,7 @@ public class StandardEvalApply implements EvalApply {
                 } else {
                     environment.setVariable(name, eval(value, environment));
 
-                    yield new LispSymbol("ok");
+                    yield new Ok();
                 }
             }
 
@@ -195,6 +197,9 @@ public class StandardEvalApply implements EvalApply {
                     }
                 }
             }
+            case Nil _, Ok _ -> {
+                return false;
+            }
         }
     }
 
@@ -204,11 +209,11 @@ public class StandardEvalApply implements EvalApply {
                 return null;
             }
 
-            if (!(lispList.car() instanceof LispSymbol symbol)) {
+            if (!(lispList.car() instanceof LispSymbol(String name))) {
                 return null;
             }
 
-            return symbol.name().equals("if") ? new Conditional(lispList.cadr(), lispList.caddr(),
+            return name.equals("if") ? new Conditional(lispList.cadr(), lispList.caddr(),
                 lispList.cadddr()) : null;
         }
         return null;
@@ -227,18 +232,18 @@ public class StandardEvalApply implements EvalApply {
                 return null;
             }
 
-            if (!(lispList.car() instanceof LispSymbol symbol)) {
+            if (!(lispList.car() instanceof LispSymbol(String name))) {
                 return null;
             }
 
-            return symbol.name().equals("begin") ? new Sequence(lispList.cdr().elements()) : null;
+            return name.equals("begin") ? new Sequence(lispList.cdr().elements()) : null;
         }
         return null;
     }
 
     private Quotation parseQuotation(LispExpression expression) {
-        return expression instanceof LispList l && l.car() instanceof LispSymbol symbol
-               && symbol.name().equals("quote") ? new Quotation(l.cadr()) : null;
+        return expression instanceof LispList l && l.car() instanceof LispSymbol(String name)
+               && name.equals("quote") ? new Quotation(l.cadr()) : null;
     }
 
     private Assignment parseAssignment(LispExpression expression) {
