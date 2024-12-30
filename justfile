@@ -14,4 +14,4 @@ build:
     mvn compile
 
 repl:
-     mvn -DskipTests=true clean package exec:java -Dexec.mainClass=net.fredrikmeyer.jisp.Main
+     mvn -DskipTests=true exec:java -Dexec.mainClass=net.fredrikmeyer.jisp.Main

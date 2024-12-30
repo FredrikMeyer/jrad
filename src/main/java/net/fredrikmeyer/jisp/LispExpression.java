@@ -42,6 +42,13 @@ public sealed interface LispExpression permits
         record UserProcedure(Environment environment, List<String> arguments,
                              LispExpression body) implements Procedure {
 
+            @Override
+            public String toString() {
+                return "UserProcedure{" +
+                       "arguments=" + arguments +
+                       ", body=" + body +
+                       '}';
+            }
         }
 
     }

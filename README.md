@@ -31,6 +31,8 @@ Voila:
 >>: 3.0
 ```
 
+Show current env by typing `_env`.
+
 ## Syntax
 
 Atoms:

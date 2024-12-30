@@ -244,11 +244,11 @@ public class EvalApplyImpl implements IEvalApply {
                 return null;
             }
 
-            if ((!(lispList.car() instanceof LispSymbol symbol))) {
+            if ((!(lispList.car() instanceof LispSymbol(String name)))) {
                 return null;
             }
 
-            if (!symbol.name().equals("define")) {
+            if (!name.equals("define")) {
                 return null;
             }
 
@@ -269,11 +269,11 @@ public class EvalApplyImpl implements IEvalApply {
                 return null;
             }
 
-            if (!(lispList.car() instanceof LispSymbol symbol)) {
+            if (!(lispList.car() instanceof LispSymbol(String name))) {
                 return null;
             }
 
-            if (!symbol.name().equals("set!")) {
+            if (!name.equals("set!")) {
                 return null;
             }
 
@@ -288,11 +288,11 @@ public class EvalApplyImpl implements IEvalApply {
 
     private Lambda parseLambda(LispExpression expression) {
         if (expression instanceof LispList lispList) {
-            if (!(lispList.car() instanceof LispSymbol symbol)) {
+            if (!(lispList.car() instanceof LispSymbol(String name))) {
                 return null;
             }
 
-            if (!(symbol.name().equals("lambda"))) {
+            if (!(name.equals("lambda"))) {
                 return null;
             }
 

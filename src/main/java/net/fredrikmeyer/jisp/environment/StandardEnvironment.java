@@ -22,8 +22,10 @@ public class StandardEnvironment implements Environment {
         put("+", new BuiltInProcedure("+") {
             @Override
             public LispExpression apply(LispExpression... values) {
-                if (!(Arrays.stream(values).map(LispExpression::getClass).allMatch(c -> c == NumberLiteral.class))) {
-                    throw new RuntimeException("Not all values are numbers: " + Arrays.toString(values));
+                if (!(Arrays.stream(values).map(LispExpression::getClass)
+                    .allMatch(c -> c == NumberLiteral.class))) {
+                    throw new RuntimeException(
+                        "Not all values are numbers: " + Arrays.toString(values));
                 }
 
                 return new NumberLiteral(
@@ -145,5 +147,14 @@ public class StandardEnvironment implements Environment {
         }
 
         return newEnvironment;
+    }
+
+    @Override
+    public String toString() {
+        return "StandardEnvironment{" +
+               "env=" + env +
+               ", parent=" + parent +
+               '}';
+
     }
 }
