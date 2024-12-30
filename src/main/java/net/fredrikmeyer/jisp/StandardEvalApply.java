@@ -22,7 +22,7 @@ import net.fredrikmeyer.jisp.LispLiteral.NumberLiteral;
 import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
 import net.fredrikmeyer.jisp.environment.Environment;
 
-public class EvalApplyImpl implements IEvalApply {
+public class StandardEvalApply implements EvalApply {
 
     @Override
     public LispExpression eval(LispExpression expression, Environment environment) {

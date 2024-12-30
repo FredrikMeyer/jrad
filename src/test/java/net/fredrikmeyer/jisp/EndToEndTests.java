@@ -33,7 +33,7 @@ public class EndToEndTests {
     public void evaluateSimpleSExpression(String input, LispExpression expected) {
         Tokenizer tokenizer = new TokenizerImpl();
         Parser parser = new ParserImpl();
-        IEvalApply evalApply = new EvalApplyImpl();
+        EvalApply evalApply = new StandardEvalApply();
 
         List<Token> tokens = tokenizer.tokenize(input);
         LispExpression parsed = parser.parse(tokens);
@@ -95,7 +95,7 @@ public class EndToEndTests {
     public void equalsImplementation() {
         Tokenizer tokenizer = new TokenizerImpl();
         Parser parser = new ParserImpl();
-        IEvalApply evalApply = new EvalApplyImpl();
+        EvalApply evalApply = new StandardEvalApply();
 
         List<Token> tokens = tokenizer.tokenize("(= 1 1)");
         var parsed = parser.parse(tokens);
@@ -113,7 +113,7 @@ public class EndToEndTests {
 
         Tokenizer tokenizer = new TokenizerImpl();
         Parser parser = new ParserImpl();
-        IEvalApply evalApply = new EvalApplyImpl();
+        EvalApply evalApply = new StandardEvalApply();
 
         List<Token> tokens = tokenizer.tokenize(s);
 
@@ -134,7 +134,7 @@ public class EndToEndTests {
 
         Tokenizer tokenizer = new TokenizerImpl();
         Parser parser = new ParserImpl();
-        IEvalApply evalApply = new EvalApplyImpl();
+        EvalApply evalApply = new StandardEvalApply();
 
         System.out.println(s);
         List<Token> tokens = tokenizer.tokenize(s);
@@ -154,7 +154,7 @@ public class EndToEndTests {
     void shouldGiveStackOverFlow() {
         Tokenizer tokenizer = new TokenizerImpl();
         Parser parser = new ParserImpl();
-        IEvalApply evalApply = new EvalApplyImpl();
+        EvalApply evalApply = new StandardEvalApply();
 
         LispExpression expression = parser.parse(
             tokenizer.tokenize("((lambda (X) (X X)) (lambda (X) (X X)))"));

@@ -1,54 +1,45 @@
 package net.fredrikmeyer.jisp.repl;
 
-import java.io.IOException;
-import net.fredrikmeyer.jisp.EvalApplyImpl;
-import net.fredrikmeyer.jisp.IEvalApply;
+import net.fredrikmeyer.jisp.StandardEvalApply;
+import net.fredrikmeyer.jisp.EvalApply;
 import net.fredrikmeyer.jisp.LispExpression;
 import net.fredrikmeyer.jisp.environment.Environment;
 import net.fredrikmeyer.jisp.environment.StandardEnvironment;
 import net.fredrikmeyer.jisp.parser.ParserImpl;
+import net.fredrikmeyer.jisp.repl.ReplResult.Quit;
+import net.fredrikmeyer.jisp.repl.ReplResult.StringValue;
 import net.fredrikmeyer.jisp.tokenizer.TokenizerImpl;
 import org.intellij.lang.annotations.Language;
-import org.jline.reader.LineReader;
-import org.jline.reader.UserInterruptException;
 
 public class Repl {
 
-    public void run(LineReader reader) {
-        Environment env = new StandardEnvironment();
-        IEvalApply evalApply = new EvalApplyImpl();
+    private final Environment environment;
+    private final EvalApply evalApply;
 
-        while (true) {
-            String line;
-            try {
-                line = reader.readLine("> ");
-            } catch (UserInterruptException e) {
-                System.out.println("Exiting...");
-                break;
-            }
-            if (line == null || line.strip().equalsIgnoreCase("exit")) {
-                break;
-            }
-            if (line.equalsIgnoreCase("_env")) {
-                System.out.println(">> ENV: " + env);
-                continue;
-            }
-            reader.getHistory().add(line);
+    public Repl() {
+        this.environment = new StandardEnvironment();
+        this.evalApply = new StandardEvalApply();
+    }
 
-            try {
-                LispExpression result = evaluateLastLine(line, evalApply, env);
-                System.out.println(">>: " + result);
-            } catch (Exception e) {
-                System.out.println(">>: " + e.getMessage());
-            }
+    public ReplResult write(@Language("scheme") String input) {
+        if (input == null || input.strip().equalsIgnoreCase("exit")) {
+            return new Quit();
+        }
+        if (input.equalsIgnoreCase("_env")) {
+            return new StringValue("ENV: " + environment);
+        }
+
+        try {
+            LispExpression result = this.evaluateLastLine(input);
+            return new StringValue(result.toString());
+        } catch (Exception e) {
+            return new StringValue(e.getMessage());
         }
     }
 
-    private LispExpression evaluateLastLine(@Language("scheme") String line,
-        IEvalApply evalApply,
-        Environment env) {
+    private LispExpression evaluateLastLine(@Language("scheme") String line) {
         LispExpression parsed = parse(line);
-        return evalApply.eval(parsed, env);
+        return evalApply.eval(parsed, environment);
     }
 
     private LispExpression parse(@Language("scheme") String input) {

@@ -4,7 +4,7 @@ import java.util.List;
 import net.fredrikmeyer.jisp.LispExpression.Procedure;
 import net.fredrikmeyer.jisp.environment.Environment;
 
-public interface IEvalApply {
+public interface EvalApply {
 
     LispExpression eval(LispExpression expression, Environment environment);
 

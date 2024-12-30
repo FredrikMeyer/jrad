@@ -12,11 +12,11 @@ import net.fredrikmeyer.jisp.LispLiteral.StringLiteral;
 import net.fredrikmeyer.jisp.environment.Environment;
 import org.junit.jupiter.api.Test;
 
-class EvalApplyImplTest {
+class StandardEvalApplyTest {
 
     @Test
     public void stringsSelfEvaluate() {
-        EvalApplyImpl evalApply = new EvalApplyImpl();
+        StandardEvalApply evalApply = new StandardEvalApply();
 
         var res = evalApply.eval(new LispLiteral.StringLiteral("hei"), dummyEnvironment());
 
@@ -44,7 +44,7 @@ class EvalApplyImplTest {
 
     @Test
     public void numbersSelfEvaluate() {
-        EvalApplyImpl evalApply = new EvalApplyImpl();
+        StandardEvalApply evalApply = new StandardEvalApply();
 
         var res = evalApply.eval(new LispLiteral.NumberLiteral(120.4), dummyEnvironment());
 
@@ -53,7 +53,7 @@ class EvalApplyImplTest {
 
     @Test
     public void canDefineVariables() {
-        EvalApplyImpl evalApply = new EvalApplyImpl();
+        StandardEvalApply evalApply = new StandardEvalApply();
 
         Environment environment = new Environment() {
             private final Map<String, LispExpression> env = new HashMap<>();
@@ -84,7 +84,7 @@ class EvalApplyImplTest {
 
     @Test
     public void defineLambda() {
-        EvalApplyImpl evalApply = new EvalApplyImpl();
+        StandardEvalApply evalApply = new StandardEvalApply();
 
         // (lambda (x) (+ x 2))
         var res = evalApply.eval(new LispList(
@@ -97,7 +97,7 @@ class EvalApplyImplTest {
 
     @Test
     public void quotedReturnsList() {
-        EvalApplyImpl evalApply = new EvalApplyImpl();
+        StandardEvalApply evalApply = new StandardEvalApply();
 
         var res = evalApply.eval(new LispList(
                 List.of(new LispSymbol("quote"), new LispList(List.of(new LispSymbol("x"))))),
