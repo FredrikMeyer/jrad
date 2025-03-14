@@ -143,6 +143,11 @@ public class StandardEvalApply implements EvalApply {
             return q;
         }
 
+        // Example: (defn f (x) (+ x 1))
+        if (parseDefn(expression) instanceof Assignment assignment) {
+            return assignment;
+        }
+
         // Example: (define a (+ 1 2))
         if (parseAssignment(expression) instanceof Assignment assignment) {
             return assignment;
@@ -314,6 +319,46 @@ public class StandardEvalApply implements EvalApply {
 
             return new Lambda(arguments.elements().stream().map(e -> (LispSymbol) e).toList(),
                 lispList.caddr());
+        }
+        return null;
+    }
+
+    /**
+     * Parse a defn expression: (defn f (x y) body)
+     * This is equivalent to: (define f (lambda (x y) body))
+     */
+    private Assignment parseDefn(LispExpression expression) {
+        if (expression instanceof LispList lispList) {
+            if (lispList.length() < 4) {
+                return null;
+            }
+
+            if (!(lispList.car() instanceof LispSymbol(String name))) {
+                return null;
+            }
+
+            if (!name.equals("defn")) {
+                return null;
+            }
+
+            if (!(lispList.cadr() instanceof LispSymbol functionName)) {
+                return null;
+            }
+
+            if (!(lispList.caddr() instanceof LispList arguments)) {
+                return null;
+            }
+
+            if (!arguments.elements().stream().allMatch(e -> e instanceof LispSymbol)) {
+                throw new IllegalArgumentException("All args must be symbol");
+            }
+
+            // Create a lambda expression: (lambda (args) body)
+            var lambdaSymbol = new LispSymbol("lambda");
+            var lambdaList = new LispList(List.of(lambdaSymbol, arguments, lispList.cadddr()));
+
+            // Return an assignment of the lambda to the function name
+            return new Assignment(functionName, lambdaList);
         }
         return null;
     }

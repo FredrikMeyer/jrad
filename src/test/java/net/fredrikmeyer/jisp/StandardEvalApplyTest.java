@@ -106,4 +106,78 @@ class StandardEvalApplyTest {
 
         assertThat(res).isEqualTo(new LispList(List.of(new LispSymbol("x"))));
     }
+
+    @Test
+    public void defnDefinesFunction() {
+        StandardEvalApply evalApply = new StandardEvalApply();
+
+        Environment environment = new Environment() {
+            private final Map<String, LispExpression> env = new HashMap<>();
+
+            @Override
+            public LispExpression lookUpVariable(String name) {
+                return env.get(name);
+            }
+
+            @Override
+            public void setVariable(String name, LispExpression value) {
+                env.put(name, value);
+            }
+
+            @Override
+            public Environment extendEnvironment(Map<String, LispExpression> bindings) {
+                Map<String, LispExpression> newEnv = new HashMap<>(env);
+                newEnv.putAll(bindings);
+
+                return new Environment() {
+                    @Override
+                    public LispExpression lookUpVariable(String name) {
+                        return newEnv.get(name);
+                    }
+
+                    @Override
+                    public void setVariable(String name, LispExpression value) {
+                        newEnv.put(name, value);
+                    }
+
+                    @Override
+                    public Environment extendEnvironment(Map<String, LispExpression> moreBindings) {
+                        return null;
+                    }
+                };
+            }
+        };
+
+        // Define a function: (defn add (x y) (+ x y))
+        evalApply.eval(new LispList(
+                List.of(new LispSymbol("defn"), new LispSymbol("add"),
+                    new LispList(List.of(new LispSymbol("x"), new LispSymbol("y"))),
+                    new LispList(List.of(new LispSymbol("+"), new LispSymbol("x"), new LispSymbol("y"))))),
+            environment);
+
+        // Verify that the function is defined
+        LispExpression addFunction = environment.lookUpVariable("add");
+        assertThat(addFunction).isInstanceOf(Procedure.class);
+
+        // Set up the environment with a + function for testing
+        environment.setVariable("+", new Procedure.BuiltInProcedure("+") {
+            @Override
+            public LispExpression apply(LispExpression... values) {
+                if (values.length != 2 || !(values[0] instanceof NumberLiteral) || !(values[1] instanceof NumberLiteral)) {
+                    throw new IllegalArgumentException("+ expects two numbers");
+                }
+                double a = ((NumberLiteral) values[0]).value();
+                double b = ((NumberLiteral) values[1]).value();
+                return new NumberLiteral(a + b);
+            }
+        });
+
+        // Call the function: (add 2 3)
+        var result = evalApply.eval(new LispList(
+                List.of(new LispSymbol("add"), new NumberLiteral(2.0), new NumberLiteral(3.0))),
+            environment);
+
+        // Verify the result
+        assertThat(result).isEqualTo(new NumberLiteral(5.0));
+    }
 }
