@@ -20,6 +20,15 @@ jobs:
         java-version: '22'
         distribution: 'temurin'
         cache: maven
+    - name: Set up headless X11 for GUI tests
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb
+        export DISPLAY=:99
+        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        echo "DISPLAY=:99" >> $GITHUB_ENV
+        # Note: This setup allows for both headless mode testing (java.awt.headless=true)
+        # and virtual display testing using Xvfb
     - name: Build with Maven
       run: ./mvnw -B package --file pom.xml
 
