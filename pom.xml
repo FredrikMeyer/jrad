@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="https://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.fredrikmeyer.jisp</groupId>
@@ -112,6 +112,28 @@
           </dependency>
         </dependencies>
       </plugin>
+      <!-- Added to address Maven security vulnerability (CVE-2021-26291) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce-banned-repositories</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedRepositories>
+                  <bannedRepositories>http://*</bannedRepositories>
+                  <bannedPluginRepositories>http://*</bannedPluginRepositories>
+                </bannedRepositories>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencyManagement>
@@ -143,4 +165,32 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <!-- Added to address Maven security vulnerability (CVE-2021-26291) -->
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
 </project>
