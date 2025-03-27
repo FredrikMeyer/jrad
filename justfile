@@ -11,7 +11,7 @@ mutation-coverage: pitest
     open ./target/pit-reports/index.html
 
 build:
-    ./mvnw compile
+    ./mvnw package
 
 repl:
      ./mvnw -DskipTests=true exec:java -Dexec.mainClass=net.fredrikmeyer.jisp.Main
