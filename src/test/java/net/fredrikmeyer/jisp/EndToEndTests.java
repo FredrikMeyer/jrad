@@ -65,6 +65,10 @@ public class EndToEndTests {
             Arguments.of("(< 5 6 3 2)", new BoolValue(false)),
             Arguments.of("(< 9999 2)", new BoolValue(false)),
             Arguments.of("(/ 5 2)", new NumberLiteral(2.5)),
+            Arguments.of("(% 10 3)", new NumberLiteral(1.0)),
+            Arguments.of("(% 10 2)", new NumberLiteral(0.0)),
+            Arguments.of("(% -10 3)", new NumberLiteral(-1.0)),
+            Arguments.of("(% 10.5 3.2)", new NumberLiteral(10.5 % 3.2)),
             Arguments.of("(if #t 1 2)", new NumberLiteral(1.0)),
             Arguments.of("(begin (define a 2) (set! a 3) a)", new NumberLiteral(3.0)),
             Arguments.of("(begin (define a 2) (set! a (+ a 1)) a)", new NumberLiteral(3.0)),
@@ -90,7 +94,47 @@ public class EndToEndTests {
                   (define is-odd (lambda (n)
                                  (if (= n 0) #f (is-even (- n 1)))))
                   (list (is-even 20) (is-odd 20)))
-                """, new LispList(new BoolValue(true), new BoolValue(false)))
+                """, new LispList(new BoolValue(true), new BoolValue(false))),
+            // Test map function with a built-in procedure
+            Arguments.of("""
+                (map abs '(-1 2 -3 4 -5))
+                """, new LispList(
+                    new NumberLiteral(1.0),
+                    new NumberLiteral(2.0),
+                    new NumberLiteral(3.0),
+                    new NumberLiteral(4.0),
+                    new NumberLiteral(5.0)
+                )),
+            // Test map function with a lambda
+            Arguments.of("""
+                (map (lambda (x) (* x x)) '(1 2 3 4 5))
+                """, new LispList(
+                    new NumberLiteral(1.0),
+                    new NumberLiteral(4.0),
+                    new NumberLiteral(9.0),
+                    new NumberLiteral(16.0),
+                    new NumberLiteral(25.0)
+                )),
+            // Test filter function with a built-in predicate
+            Arguments.of("""
+                (begin
+                  (define positive? (lambda (x) (< 0 x)))
+                  (filter positive? '(-2 -1 0 1 2)))
+                """, new LispList(
+                    new NumberLiteral(1.0),
+                    new NumberLiteral(2.0)
+                )),
+            // Test filter function with a lambda predicate for even numbers using modulo
+            Arguments.of("""
+                (begin
+                  (define is-even? (lambda (x)
+                    (= (% x 2) 0)))
+                  (filter is-even? '(1 2 3 4 5 6)))
+                """, new LispList(
+                    new NumberLiteral(2.0),
+                    new NumberLiteral(4.0),
+                    new NumberLiteral(6.0)
+                ))
         );
     }
 

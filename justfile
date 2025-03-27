@@ -2,16 +2,16 @@ hello:
     echo "hei"
 
 test:
-    mvn test
+    ./mvnw test
 
 pitest:
-    mvn test-compile org.pitest:pitest-maven:mutationCoverage
+    ./mvnw test-compile org.pitest:pitest-maven:mutationCoverage -DexcludedTestClasses=net.fredrikmeyer.jisp.repl.GUIExampleTest
 
 mutation-coverage: pitest
     open ./target/pit-reports/index.html
 
 build:
-    mvn compile
+    ./mvnw compile
 
 repl:
-     mvn -DskipTests=true exec:java -Dexec.mainClass=net.fredrikmeyer.jisp.Main
+     ./mvnw -DskipTests=true exec:java -Dexec.mainClass=net.fredrikmeyer.jisp.Main
